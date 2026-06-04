@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <!-- Website Tab Logo -->
+    <link rel="icon" type="image/png" href="/KHMCPL_LOGO.png" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kavin Health & Medicare Pvt Ltd</title>
+
+    <style>
+      /* Loader Screen */
+      #loader {
+        position: fixed;
+        inset: 0;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+      }
+
+      #loader img {
+        width: 140px;
+        height: auto;
+        animation: zoom 1.2s ease-in-out infinite alternate;
+      }
+
+      @keyframes zoom {
+        from {
+          transform: scale(1);
+          opacity: 0.8;
+        }
+        to {
+          transform: scale(1.08);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <!-- Center Loading Logo -->
+    <div id="loader">
+      <img src="%BASE_URL%KHMCPL_LOGO.png" alt="Loading Logo" />
+    </div>
+
+    <div id="root"></div>
+
+    <script type="module" src="/src/main.jsx"></script>
+
+    <script>
+      window.addEventListener("load", () => {
+        const loader = document.getElementById("loader");
+
+        setTimeout(() => {
+          loader.style.opacity = "0";
+          loader.style.transition = "0.5s";
+
+          setTimeout(() => {
+            loader.style.display = "none";
+          }, 500);
+        }, 1000);
+      });
+    </script>
+
+  </body>
+</html>
