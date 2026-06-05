@@ -14,7 +14,10 @@ export default function Services() {
     const [formData, setFormData] = useState({
         title: '',
         description: '',
-        image: null
+        image: null,
+        meta_title: '',
+        meta_description: '',
+        meta_keywords: ''
     });
     const [editingId, setEditingId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,7 +26,7 @@ export default function Services() {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [serviceToDelete, setServiceToDelete] = useState(null);
     const [failedImages, setFailedImages] = useState({});
-    const itemsPerPage = 5;
+    const itemsPerPage = 10;
 
     const fileInputRef = useRef(null);
     const editFileInputRef = useRef(null);
@@ -80,9 +83,8 @@ export default function Services() {
             toast.error('Service Title must be 6 words or less');
             return;
         }
-        const descWords = formData.description.trim().split(/\s+/).filter(word => word.length > 0);
-        if (descWords.length > 200) {
-            toast.error('Description must be 200 words or less');
+        if (formData.description.trim().length > 500) {
+            toast.error('Description must be 500 characters or less');
             return;
         }
         if (formData.image && formData.image.size > 3 * 1024 * 1024) {
@@ -94,7 +96,10 @@ export default function Services() {
             const data = new FormData();
             data.append('title', formData.title);
             data.append('description', formData.description);
-            data.append('image', formData.image);
+            data.append('meta_title', formData.meta_title);
+            data.append('meta_description', formData.meta_description);
+            data.append('meta_keywords', formData.meta_keywords);
+            if (formData.image) data.append('image', formData.image);
 
             let response;
             if (editingId) {
@@ -109,7 +114,7 @@ export default function Services() {
 
             if (response.data.success) {
                 toast.success(editingId ? 'Service updated successfully' : 'Service added successfully');
-                setFormData({ title: '', description: '', image: null });
+                setFormData({ title: '', description: '', image: null, meta_title: '', meta_description: '', meta_keywords: '' });
                 setImagePreview(null);
                 setEditingId(null);
                 setIsModalOpen(false);
@@ -132,7 +137,10 @@ export default function Services() {
         setFormData({
             title: service.title,
             description: service.description,
-            image: null
+            image: null,
+            meta_title: service.meta_title || '',
+            meta_description: service.meta_description || '',
+            meta_keywords: service.meta_keywords || ''
         });
         setImagePreview(`${API_BASE}/uploads/${service.image}`);
         setIsModalOpen(true);
@@ -173,12 +181,12 @@ export default function Services() {
                 <div className="flex justify-between items-center">
                     <div>
                         <h1 className="text-2xl md:text-3xl font-bold text-slate-800">Manage Services</h1>
-                        <p className="text-slate-500 mt-1">Add and manage dynamic services for the frontend</p>
+                        <p className="text-[#50ad77] mt-1">Add and manage dynamic services for the frontend</p>
                     </div>
                     <button
                         onClick={() => {
                             setEditingId(null);
-                            setFormData({ title: '', description: '', image: null });
+                            setFormData({ title: '', description: '', image: null, meta_title: '', meta_description: '', meta_keywords: '' });
                             setImagePreview(null);
                             setIsModalOpen(true);
                         }}
@@ -302,7 +310,7 @@ export default function Services() {
                                 onClick={() => {
                                     setIsModalOpen(false);
                                     setEditingId(null);
-                                    setFormData({ title: '', description: '', image: null });
+                                    setFormData({ title: '', description: '', image: null, meta_title: '', meta_description: '', meta_keywords: '' });
                                     setImagePreview(null);
                                 }}
                                 className="text-slate-400 hover:text-slate-600 focus:outline-none p-1 rounded-md hover:bg-slate-100 transition-colors"
@@ -326,14 +334,56 @@ export default function Services() {
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+                                            <div className="flex justify-between items-center mb-1">
+                                                <label className="block text-sm font-medium text-slate-700">Description</label>
+                                                <span className={`text-xs ${formData.description.length > 500 ? 'text-red-500 font-bold' : 'text-slate-500'}`}>
+                                                    {formData.description.length}/500 characters
+                                                </span>
+                                            </div>
                                             <textarea
                                                 name="description"
                                                 value={formData.description}
                                                 onChange={handleInputChange}
+                                                maxLength={500}
                                                 rows="4"
                                                 className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-colors text-slate-800 resize-none"
-                                                placeholder="Enter service description... (Max 200 words)"
+                                                placeholder="Enter service description... (Max 500 characters)"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700 mb-1">Meta Title</label>
+                                            <input
+                                                type="text"
+                                                name="meta_title"
+                                                value={formData.meta_title}
+                                                onChange={handleInputChange}
+                                                maxLength={25}
+                                                className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-colors text-slate-800"
+                                                placeholder="SEO Meta Title"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700 mb-1">Meta Description</label>
+                                            <textarea
+                                                name="meta_description"
+                                                value={formData.meta_description}
+                                                onChange={handleInputChange}
+                                                rows="2"
+                                                maxLength={50}
+                                                className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-colors text-slate-800 resize-none"
+                                                placeholder="SEO Meta Description"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700 mb-1">Meta Keywords</label>
+                                            <input
+                                                type="text"
+                                                name="meta_keywords"
+                                                value={formData.meta_keywords}
+                                                onChange={handleInputChange}
+                                                maxLength={25}
+                                                className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-colors text-slate-800"
+                                                placeholder="SEO Meta Keywords (comma separated)"
                                             />
                                         </div>
                                     </div>
@@ -399,7 +449,7 @@ export default function Services() {
                                     onClick={() => {
                                         setIsModalOpen(false);
                                         setEditingId(null);
-                                        setFormData({ title: '', description: '', image: null });
+                                        setFormData({ title: '', description: '', image: null, meta_title: '', meta_description: '', meta_keywords: '' });
                                         setImagePreview(null);
                                     }}
                                     className="px-5 py-2.5 text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 font-medium rounded-lg transition-colors"

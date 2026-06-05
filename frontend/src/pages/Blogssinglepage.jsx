@@ -100,7 +100,7 @@ export default function Blogssinglepage() {
         <div className="text-[11px] font-extrabold text-[#50ad77] uppercase tracking-widest mb-4">
           {blog.read_time?.toUpperCase()}
         </div>
-        <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 mb-6 font-serif">
+        <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 mb-6 font-sans">
           {blog.title}
         </h1>
         <div className="relative aspect-[1.7/1] w-full bg-slate-100 overflow-hidden rounded-2xl mb-8">

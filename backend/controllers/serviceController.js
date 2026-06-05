@@ -1,13 +1,13 @@
 const db = require('../config/db');
 
 exports.addService = (req, res) => {
-  const { title, description } = req.body;
+  const { title, description, meta_title, meta_description, meta_keywords } = req.body;
   const image = req.file ? req.file.filename : null;
   if (!title || !description || !image) {
     return res.status(400).json({ success: false, message: 'All fields are required' });
   }
-  const query = 'INSERT INTO services (title, description, image) VALUES (?, ?, ?)';
-  db.query(query, [title, description, image], (err, result) => {
+  const query = 'INSERT INTO services (title, description, image, meta_title, meta_description, meta_keywords) VALUES (?, ?, ?, ?, ?, ?)';
+  db.query(query, [title, description, image, meta_title || '', meta_description || '', meta_keywords || ''], (err, result) => {
     if (err) {
       console.error('Error adding service:', err);
       return res.status(500).json({ success: false, message: 'Database error' });
@@ -41,7 +41,7 @@ exports.deleteService = (req, res) => {
 
 exports.updateService = (req, res) => {
   const { id } = req.params;
-  const { title, description } = req.body;
+  const { title, description, meta_title, meta_description, meta_keywords } = req.body;
   const image = req.file ? req.file.filename : null;
 
   if (!title || !description) {
@@ -52,11 +52,11 @@ exports.updateService = (req, res) => {
   let params;
 
   if (image) {
-    query = 'UPDATE services SET title = ?, description = ?, image = ? WHERE id = ?';
-    params = [title, description, image, id];
+    query = 'UPDATE services SET title = ?, description = ?, image = ?, meta_title = ?, meta_description = ?, meta_keywords = ? WHERE id = ?';
+    params = [title, description, image, meta_title || '', meta_description || '', meta_keywords || '', id];
   } else {
-    query = 'UPDATE services SET title = ?, description = ? WHERE id = ?';
-    params = [title, description, id];
+    query = 'UPDATE services SET title = ?, description = ?, meta_title = ?, meta_description = ?, meta_keywords = ? WHERE id = ?';
+    params = [title, description, meta_title || '', meta_description || '', meta_keywords || '', id];
   }
 
   db.query(query, params, (err, result) => {

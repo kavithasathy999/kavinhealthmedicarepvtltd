@@ -76,7 +76,7 @@ export default function AboutSection() {
 
       <section
         ref={sectionRef}
-        className="relative py-12 md:py-16 lg:py-24 overflow-hidden bg-white z-10 w-full"
+        className="relative py-12 md:py-16 lg:py-16 overflow-hidden bg-white z-10 w-full"
       >
         <div className="absolute top-10 left-10 w-48 h-48 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-[#50ad77]/10 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse-soft -z-10"></div>
         <div className="absolute bottom-10 right-10 w-48 h-48 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-emerald-50 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse-soft -z-10" style={{ animationDelay: '2s' }}></div>
@@ -104,7 +104,7 @@ export default function AboutSection() {
                     <img
                       src={img1}
                       alt="Doctor examining lab report"
-                      className="w-full h-full object-cover bg-white transition-transform duration-700 hover:scale-105"
+                      className="w-full h-full object-cover bg-white transition-transform duration-700"
                     />
                   </div>
                   <div className={`aspect-square rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border-4 border-white animate-float-y z-20 bg-slate-100 transition-all duration-1000 delay-500 ease-out ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'

@@ -22,10 +22,10 @@ const Esteemedpmcslider = ({ title = "Our Esteemed PMCs", type = "Our Esteemed P
   const tripleImages = [...images, ...images, ...images];
 
   return (
-    <div className={`w-full ${bgClass} py-12 md:py-16 lg:py-20 relative`}>
+    <div className={`w-full ${bgClass} py-6 md:py-16 lg:py-8 relative`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 md:mb-12 text-center">
-        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">
-          {title}
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">
+          {title.split(' ').slice(0, -1).join(' ')} <span className="text-[#50ad77]">{title.split(' ').slice(-1)}</span>
         </h2>
         <div className="mt-4 h-1 w-20 bg-[#50ad77] rounded-full mx-auto" />
       </div>

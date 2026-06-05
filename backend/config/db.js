@@ -70,6 +70,9 @@ const tableDefinitions = {
     read_time VARCHAR(50),
     title VARCHAR(255),
     description TEXT,
+    meta_title VARCHAR(255),
+    meta_description TEXT,
+    meta_keywords TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`,
   testimonials: `CREATE TABLE IF NOT EXISTS testimonials (
@@ -78,6 +81,9 @@ const tableDefinitions = {
     designation VARCHAR(255),
     description TEXT,
     star_rating INT,
+    meta_title VARCHAR(255),
+    meta_description TEXT,
+    meta_keywords TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`,
   stats: `CREATE TABLE IF NOT EXISTS stats (
@@ -107,6 +113,9 @@ const tableDefinitions = {
     color_to VARCHAR(50),
     display_order INT DEFAULT 0,
     is_active TINYINT(1) DEFAULT 1,
+    meta_title VARCHAR(255),
+    meta_description TEXT,
+    meta_keywords TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`,
   career_applications: `CREATE TABLE IF NOT EXISTS career_applications (
@@ -126,15 +135,30 @@ const tableDefinitions = {
     title VARCHAR(255),
     description TEXT,
     image VARCHAR(255),
+    meta_title VARCHAR(255),
+    meta_description TEXT,
+    meta_keywords TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`,
-  investors_relations: `CREATE TABLE IF NOT EXISTS investors_relations (
+  resource_repository: `CREATE TABLE IF NOT EXISTS resource_repository (
     id INT PRIMARY KEY AUTO_INCREMENT,
     headline VARCHAR(255),
     pdf_url VARCHAR(255),
     file_size VARCHAR(50),
     report_year INT,
+    meta_title VARCHAR(255),
+    meta_description TEXT,
+    meta_keywords TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  )`,
+  page_meta_tags: `CREATE TABLE IF NOT EXISTS page_meta_tags (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    page_route VARCHAR(255) UNIQUE,
+    meta_title VARCHAR(255),
+    meta_description TEXT,
+    meta_keywords TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
   )`,
 };
 

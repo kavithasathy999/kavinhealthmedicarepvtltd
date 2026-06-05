@@ -26,7 +26,7 @@ function Dashboard() {
     careers: 0,
     applications: 0,
     stats: 0,
-    investorsrelations: 0
+    resourcerepository: 0
   });
   const [loading, setLoading] = useState(true);
 
@@ -35,7 +35,7 @@ function Dashboard() {
       try {
         const API_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
         
-        const [banners, brands, blogs, testimonials, contacts, services, careers, applications, stats, investorsrelations] = await Promise.all([
+        const [banners, brands, blogs, testimonials, contacts, services, careers, applications, stats, resourcerepository] = await Promise.all([
           axios.get(`${API_URL}/api/banner/hero-content`).catch(() => ({ data: [] })),
           axios.get(`${API_URL}/api/brands`).catch(() => ({ data: [] })),
           axios.get(`${API_URL}/api/blogs`).catch(() => ({ data: [] })),
@@ -45,7 +45,7 @@ function Dashboard() {
           axios.get(`${API_URL}/api/career/admin/all`).catch(() => ({ data: [] })),
           axios.get(`${API_URL}/api/career/applications`).catch(() => ({ data: [] })),
           axios.get(`${API_URL}/api/stats`).catch(() => ({ data: [] })),
-          axios.get(`${API_URL}/api/investors-relations`).catch(() => ({ data: [] }))
+          axios.get(`${API_URL}/api/resource-repository`).catch(() => ({ data: [] }))
         ]);
 
         const getLength = (res) => {
@@ -67,7 +67,7 @@ function Dashboard() {
           careers: getLength(careers),
           applications: getLength(applications),
           stats: getLength(stats),
-          investorsrelations: getLength(investorsrelations)
+          resourcerepository: getLength(resourcerepository)
         });
       } catch (error) {
         console.error("Failed to fetch counts", error);
@@ -86,7 +86,7 @@ function Dashboard() {
     { title: "Careers", path: "/career", icon: <Briefcase size={28} className="text-[#FF9800]" />, bg: "bg-[#FF9800]/10", count: counts.careers },
     { title: "Applications", path: "/applications", icon: <ClipboardList size={28} className="text-[#3F51B5]" />, bg: "bg-[#3F51B5]/10", count: counts.applications },
     { title: "Services", path: "/services", icon: <Settings size={28} className="text-[#9C27B0]" />, bg: "bg-[#9C27B0]/10", count: counts.services },
-    { title: "Investors Relations", path: "/investorsrelations", icon: <TrendingUp size={28} className="text-[#8BC34A]" />, bg: "bg-[#8BC34A]/10", count: counts.investorsrelations },
+    { title: "Resource Repository", path: "/resourcerepository", icon: <TrendingUp size={28} className="text-[#8BC34A]" />, bg: "bg-[#8BC34A]/10", count: counts.resourcerepository },
     { title: "Blogs & Articles", path: "/blogs", icon: <FileText size={28} className="text-[#009688]" />, bg: "bg-[#009688]/10", count: counts.blogs },          
     { title: "Testimonials", path: "/testimonials", icon: <Star size={28} className="text-[#FFD700]" />, bg: "bg-[#FFD700]/10", count: counts.testimonials }, 
     { title: "Contact Enquiries", path: "/contact-enquiries", icon: <MessageSquare size={28} className="text-[#E91E63]" />, bg: "bg-[#E91E63]/10", count: counts.contacts },
@@ -110,7 +110,7 @@ function Dashboard() {
                 {card.icon}
               </div>
               <div>
-                <h3 className="text-slate-600 font-bold text-sm tracking-wide uppercase">{card.title}</h3>
+                <h3 className="text-slate-600 font-bold text-[18px] tracking-wide uppercase">{card.title}</h3>
                 <div className="mt-1">
                   {loading ? (
                     <div className="h-5 w-12 bg-slate-200 rounded animate-pulse"></div>

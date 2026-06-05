@@ -154,7 +154,7 @@ export default function Applications() {
     const [previewType, setPreviewType] = useState(null);
 
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 5;
+    const itemsPerPage = 10;
 
     const showToast = (message, type = 'success') => setToast({ message, type });
 
@@ -227,8 +227,8 @@ export default function Applications() {
                         </svg>
                     </div>
                     <div>
-                        <h1 className="text-base font-bold text-slate-900">Job Applications</h1>
-                        <p className="text-xs text-slate-400 hidden sm:block">View and manage candidate applications</p>
+                        <h1 className="text-3xl font-black text-slate-800 tracking-tight">Job Applications</h1>
+                        <p className="text-xs text-[#50ad77] hidden sm:block">View and manage candidate applications</p>
                     </div>
                 </div>
             </div>

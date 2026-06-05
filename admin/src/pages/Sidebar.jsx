@@ -8,7 +8,8 @@ import {
   LuMessageSquare,
   LuSettings,
   LuBriefcase,
-  LuClipboardList
+  LuClipboardList,
+  LuSearch
 } from "react-icons/lu";
 import { BarChart2 } from "lucide-react";
 
@@ -50,10 +51,11 @@ function Sidebar() {
         <NavItem to="/services" icon={<LuSettings />}>Services</NavItem>
         <NavItem to="/career" icon={<LuBriefcase />}>Career</NavItem>
         <NavItem to="/applications" icon={<LuClipboardList />}>Applications</NavItem>
-        <NavItem to="/investorsrelations" icon={<LuClipboardList />}>Investor's Relations</NavItem>
+        <NavItem to="/resourcerepository" icon={<LuClipboardList />}>Resource Repository</NavItem>
         <NavItem to="/blogs" icon={<LuNewspaper />}>Blogs & Articles</NavItem>
         <NavItem to="/testimonials" icon={<LuStar />}>Testimonials</NavItem>
         <NavItem to="/contact-enquiries" icon={<LuMessageSquare />}>Contact Enquiries</NavItem>
+        <NavItem to="/meta-tags" icon={<LuSearch />}>SEO Meta Tags</NavItem>
       </div>
     </aside>
   );

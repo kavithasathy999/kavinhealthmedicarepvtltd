@@ -20,6 +20,9 @@ const EMPTY_FORM = {
     color_to: 'to-cyan-400',
     display_order: 0,
     is_active: 1,
+    meta_title: '',
+    meta_description: '',
+    meta_keywords: '',
 };
 
 function Toast({ message, type, onClose }) {
@@ -200,6 +203,40 @@ function OpportunityModal({ item, onClose, onSaved }) {
                         </div>
                         <p className="text-xs text-slate-400 mt-1.5">Selected: {selectedPreset?.label || 'Custom'}</p>
                     </div>
+                    <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1.5">Meta Title</label>
+                        <input
+                            name="meta_title"
+                            value={form.meta_title || ''}
+                            onChange={handleChange}
+                            maxLength={25}
+                            placeholder="SEO Meta Title"
+                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#50ad77]/40 transition"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1.5">Meta Description</label>
+                        <textarea
+                            name="meta_description"
+                            value={form.meta_description || ''}
+                            onChange={handleChange}
+                            rows={2}
+                            maxLength={50}
+                            placeholder="SEO Meta Description"
+                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#50ad77]/40 transition resize-none"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1.5">Meta Keywords</label>
+                        <input
+                            name="meta_keywords"
+                            value={form.meta_keywords || ''}
+                            onChange={handleChange}
+                            maxLength={25}
+                            placeholder="SEO Meta Keywords (comma separated)"
+                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#50ad77]/40 transition"
+                        />
+                    </div>
                     <div className="flex flex-col sm:flex-row gap-4">
                         <div className="flex-1">
                             <label className="block text-sm font-semibold text-slate-700 mb-1.5">Display Order</label>
@@ -322,7 +359,7 @@ export default function Career() {
     const [deleteTarget, setDeleteTarget] = useState(null);
     const [toast, setToast] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 5;
+    const itemsPerPage = 10;
 
     const fetchOpportunities = useCallback(async () => {
         try {
@@ -409,8 +446,8 @@ export default function Career() {
                             </svg>
                         </div>
                         <div className="min-w-0">
-                            <h1 className="text-base font-bold text-slate-900 truncate">Career Management</h1>
-                            <p className="text-xs text-slate-400 hidden sm:block">Manage job category cards shown on the website</p>
+                            <h1 className="text-3xl font-black text-slate-800 tracking-tight">Career Management</h1>
+                            <p className="text-xs text-[#50ad77] hidden sm:block">Manage job category cards shown on the website</p>
                         </div>
                     </div>
                     <button

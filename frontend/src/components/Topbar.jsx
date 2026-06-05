@@ -1,11 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Clock3, MapPin } from 'lucide-react';
-import {
-  FaFacebookF,
-  FaTwitter,
-  FaInstagram,
-  FaLinkedinIn,
-} from "react-icons/fa";
+import { FaInstagram } from "react-icons/fa";
 
 const Topbar = () => {
   const topbarRef = useRef(null);
@@ -41,11 +36,9 @@ const Topbar = () => {
   useEffect(() => {
     let lastScrollY = window.scrollY;
     let ticking = false;
-
     const updateChromeVisibility = () => {
       const currentScrollY = window.scrollY;
       const scrollDifference = currentScrollY - lastScrollY;
-
       if (currentScrollY <= 80) {
         document.documentElement.dataset.siteChrome = 'visible';
       } else if (scrollDifference > 6) {
@@ -53,21 +46,17 @@ const Topbar = () => {
       } else if (scrollDifference < -6) {
         document.documentElement.dataset.siteChrome = 'visible';
       }
-
       lastScrollY = currentScrollY;
       ticking = false;
     };
-
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(updateChromeVisibility);
         ticking = true;
       }
     };
-
     document.documentElement.dataset.siteChrome = 'visible';
     window.addEventListener('scroll', handleScroll, { passive: true });
-
     return () => {
       window.removeEventListener('scroll', handleScroll);
       delete document.documentElement.dataset.siteChrome;
@@ -90,46 +79,20 @@ const Topbar = () => {
             <span className="truncate max-w-[280px] sm:max-w-none">Tiruvannamalai, Tamilnadu, India - 606 753</span>
           </span>
         </div>
-        <div className="flex items-center gap-3 sm:gap-4 mt-0.5 lg:mt-0">
-          <span className="hover:text-white cursor-pointer transition-colors duration-200 hidden sm:inline">
-            Visit our social pages
+        <div className="flex flex-row items-center justify-center lg:justify-end gap-3 sm:gap-4 mt-1 lg:mt-0 w-full lg:w-auto">
+          <span className="hover:text-white cursor-pointer transition-colors duration-200 hidden sm:inline text-xs">
+            Follow us on Instagram
           </span>
 
-          <div className="flex items-center gap-2.5 sm:gap-3 text-white">
+          <div className="flex items-center justify-center gap-2.5 sm:gap-3 text-white">
             <a
-              href="https://facebook.com"
+              href="https://www.instagram.com/kavin_health_groups?igsh=MWhseWw0OWw3dTdwaA=="
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-[#50ad77] hover:scale-110 transition-transform duration-200"
-            >
-              <FaFacebookF size={14} className="sm:w-[15px] sm:h-[15px]" />
-            </a>
-
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-[#50ad77] hover:scale-110 transition-transform duration-200"
-            >
-              <FaTwitter size={14} className="sm:w-[15px] sm:h-[15px]" />
-            </a>
-
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-[#50ad77] hover:scale-110 transition-transform duration-200"
+              className="hover:text-[#50ad77] transition-transform duration-200 flex items-center justify-center bg-slate-800/50 p-1.5 sm:p-2 rounded-md border border-slate-700/50 hover:border-[#50ad77]/50"
+              aria-label="Instagram"
             >
               <FaInstagram size={14} className="sm:w-[15px] sm:h-[15px]" />
-            </a>
-
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-[#50ad77] hover:scale-110 transition-transform duration-200"
-            >
-              <FaLinkedinIn size={14} className="sm:w-[15px] sm:h-[15px]" />
             </a>
           </div>
         </div>

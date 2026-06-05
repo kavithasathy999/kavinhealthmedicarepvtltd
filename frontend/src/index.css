@@ -44,6 +44,7 @@
 
 body {
   padding-top: calc(var(--topbar-height, 0px) + var(--header-height, 0px));
+  font-family: 'Poppins', sans-serif !important;
 }
 
 .site-topbar,

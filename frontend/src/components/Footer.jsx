@@ -10,10 +10,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import {
-  FaFacebookF,
-  FaTwitter,
-  FaYoutube,
-  FaLinkedinIn,
+  FaInstagram,
 } from "react-icons/fa";
 
 const Footer = () => {
@@ -112,8 +109,9 @@ const Footer = () => {
               {[
                 { label: 'Home', path: '/' },
                 { label: 'About Us', path: '/aboutus' },
-                { label: 'Career', path: '/career' },
-                { label: 'Blog', path: '/blogsandarticles' },
+                { label: 'Careers', path: '/career' },
+                { label: "Resource Repository", path: '/resourcerepository' },
+                { label: 'Blogs', path: '/blogsandarticles' },
                 { label: 'Contact', path: '/contact' }
               ].map((link, index) => (
                 <li key={index}>
@@ -163,23 +161,19 @@ const Footer = () => {
                 </div>
               </div>
             </div>            
-            <div className="flex flex-wrap items-center gap-3 pt-2">
-              {[
-                { icon: <FaFacebookF size={16} />, url: "https://facebook.com" },
-                { icon: <FaTwitter size={16} />, url: "https://twitter.com" },
-                { icon: <FaYoutube size={16} />, url: "https://youtube.com" },
-                { icon: <FaLinkedinIn size={16} />, url: "https://linkedin.com" },
-              ].map((social, idx) => (
-                <a
-                  key={idx}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-slate-900 text-slate-400 border border-slate-800 transition-all duration-300 hover:bg-[#50ad77] hover:text-white hover:border-[#50ad77] hover:-translate-y-1"
-                >
-                  {social.icon}
-                </a>
-              ))}
+            <div className="flex items-start gap-3.5 w-full pt-1">
+              <a
+                href="https://www.instagram.com/kavin_health_groups?igsh=MWhseWw0OWw3dTdwaA=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center gap-3.5 transition-all duration-300 hover:-translate-y-1"
+                aria-label="Instagram"
+              >
+                <FaInstagram size={20} className="shrink-0 text-[#50ad77]" />
+                <span className="text-sm sm:text-base lg:text-sm font-medium text-slate-400 group-hover:text-[#50ad77] transition-colors duration-300">
+                  Follow us on Instagram
+                </span>
+              </a>
             </div>
           </div>
         </div>

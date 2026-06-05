@@ -12,7 +12,7 @@ exports.getAllTestimonials = (req, res) => {
 };
 
 exports.createTestimonial = (req, res) => {
-  const { name, designation, description, star_rating } = req.body;
+  const { name, designation, description, star_rating, meta_title, meta_description, meta_keywords } = req.body;
   if (!name || !designation || !description || !star_rating) {
     return res.status(400).json({ message: "All fields are required." });
   }
@@ -24,8 +24,8 @@ exports.createTestimonial = (req, res) => {
     return res.status(400).json({ message: "Star rating must be between 1 and 5." });
   }
   const sql =
-    "INSERT INTO testimonials (name, designation, description, star_rating) VALUES (?, ?, ?, ?)";
-  db.query(sql, [name.trim(), designation.trim(), description.trim(), star_rating], (err, result) => {
+    "INSERT INTO testimonials (name, designation, description, star_rating, meta_title, meta_description, meta_keywords) VALUES (?, ?, ?, ?, ?, ?, ?)";
+  db.query(sql, [name.trim(), designation.trim(), description.trim(), star_rating, meta_title || '', meta_description || '', meta_keywords || ''], (err, result) => {
     if (err) return res.status(500).json({ message: "DB error", error: err });
     res.status(201).json({ message: "Testimonial created", id: result.insertId });
   });
@@ -33,7 +33,7 @@ exports.createTestimonial = (req, res) => {
 
 exports.updateTestimonial = (req, res) => {
   const { id } = req.params;
-  const { name, designation, description, star_rating } = req.body;
+  const { name, designation, description, star_rating, meta_title, meta_description, meta_keywords } = req.body;
   if (!name || !designation || !description || !star_rating) {
     return res.status(400).json({ message: "All fields are required." });
   }
@@ -42,8 +42,8 @@ exports.updateTestimonial = (req, res) => {
     return res.status(400).json({ message: "Description must be 50 words or less." });
   }
   const sql =
-    "UPDATE testimonials SET name=?, designation=?, description=?, star_rating=? WHERE id=?";
-  db.query(sql, [name.trim(), designation.trim(), description.trim(), star_rating, id], (err) => {
+    "UPDATE testimonials SET name=?, designation=?, description=?, star_rating=?, meta_title=?, meta_description=?, meta_keywords=? WHERE id=?";
+  db.query(sql, [name.trim(), designation.trim(), description.trim(), star_rating, meta_title || '', meta_description || '', meta_keywords || '', id], (err) => {
     if (err) return res.status(500).json({ message: "DB error", error: err });
     res.json({ message: "Testimonial updated" });
   });

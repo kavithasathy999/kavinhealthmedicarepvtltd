@@ -3,7 +3,7 @@ import Topbar from '../components/Topbar';
 import Header from '../components/Header';
 import FloatingButtons from '../components/FloatingButtons';
 import Footer from '../components/Footer';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import ReactPhoneInput from 'react-phone-input-2';
 const PhoneInput = ReactPhoneInput.default ? ReactPhoneInput.default : ReactPhoneInput;
 import 'react-phone-input-2/lib/style.css';
@@ -13,7 +13,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
-const CARDS_PER_PAGE = 6;
+const CARDS_PER_PAGE = 10;
 
 function SkeletonCard() {
   return (
@@ -27,12 +27,12 @@ function SkeletonCard() {
   );
 }
 
-function OpportunityCard({ role, onApply }) {
+function OpportunityCard({ role, index, onApply }) {
   return (
     <div className="group flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 py-7 border-t border-slate-200">
       <div className="flex-1">
         <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3">
-          {role.title}
+          {index + 1}. {role.title}
         </h3>
         <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
           {role.description}
@@ -92,8 +92,8 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
             key={page}
             onClick={() => onPageChange(page)}
             className={`w-9 h-9 sm:w-10 sm:h-10 text-sm font-semibold rounded-xl transition-all duration-200 ${currentPage === page
-                ? 'bg-[#50ad77] text-white shadow-md shadow-[#50ad77]/30 scale-105'
-                : 'bg-white text-slate-600 border border-slate-200 hover:border-[#50ad77] hover:text-[#50ad77]'
+              ? 'bg-[#50ad77] text-white shadow-md shadow-[#50ad77]/30 scale-105'
+              : 'bg-white text-slate-600 border border-slate-200 hover:border-[#50ad77] hover:text-[#50ad77]'
               }`}
           >
             {page}
@@ -245,38 +245,34 @@ export default function Career() {
     <>
       <Topbar />
       <Header />
-        <div className="relative h-48 sm:h-56 md:h-64 lg:h-72 w-full bg-slate-900 overflow-hidden animate-fade-in">
-          <div className="absolute inset-0 bg-black/60 z-10 mix-blend-multiply" />
-          <img
-            src={breadcrumbImg}
-            alt="Medical Consultation Banner"
-            className="w-full h-full object-cover object-center opacity-80 filter blur-[1px]"
-          />
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4">
-            <div className="bg-white/10 text-white text-[10px] sm:text-xs uppercase font-bold tracking-widest px-3 py-1 rounded backdrop-blur-xs mb-2 animate-slide-in-left">
-              Build Your Future With Us
-            </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight animate-slide-in-right">
-              Careers
-            </h2>
-            <p className="text-slate-300 text-xs sm:text-sm mt-2 max-w-xl font-light animate-fade-in">
-              <Link to="/" className="hover:text-white transition-colors duration-300">
-                Home
-              </Link>{" "}
-              / Career
-            </p>
+      <div className="relative h-48 sm:h-56 md:h-64 lg:h-72 w-full bg-slate-900 overflow-hidden animate-fade-in">
+        <div className="absolute inset-0 bg-black/60 z-10 mix-blend-multiply" />
+        <img
+          src={breadcrumbImg}
+          alt="Medical Consultation Banner"
+          className="w-full h-full object-cover object-center opacity-80 filter blur-[1px]"
+        />
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4">
+          <div className="bg-white/10 text-white text-[10px] sm:text-xs uppercase font-bold tracking-widest px-3 py-1 rounded backdrop-blur-xs mb-2 animate-slide-in-left">
+            Build Your Future With Us
           </div>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight animate-slide-in-right">
+            Careers
+          </h2>
+          <p className="text-slate-300 text-xs sm:text-sm mt-2 max-w-xl font-light animate-fade-in">
+            <Link to="/" className="hover:text-white transition-colors duration-300">
+              Home
+            </Link>{" "}
+            / Career
+          </p>
         </div>
+      </div>
       <div className="min-h-screen bg-slate-50 py-10 sm:py-14 lg:py-16 px-4 sm:px-6 lg:px-8 font-sans">
         <div className="max-w-7xl mx-auto mb-8 sm:mb-10 lg:mb-12 text-center md:text-left">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-3 sm:mb-4 leading-tight">
-            Explore <span className="text-[#50ad77]">Opportunities</span>
-          </h1>
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-            <p className="text-sm sm:text-base lg:text-lg text-slate-600 max-w-2xl leading-relaxed">
-              Join our diverse team of professionals. Discover a career path that aligns with your passion,
-              expertise, and desire to make a difference in healthcare.
-            </p>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-3 sm:mb-4">
+            <h1 className="text-4xl sm:text-4xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+              Explore <span className="text-[#50ad77] text-4xl">Opportunities</span>
+            </h1>
             {!loading && !error && total > 0 && (
               <p className="text-sm text-slate-400 shrink-0">
                 Showing{' '}
@@ -288,6 +284,9 @@ export default function Career() {
               </p>
             )}
           </div>
+          <p className="text-sm sm:text-base lg:text-lg text-slate-600 leading-relaxed lg:whitespace-nowrap">
+            Join our diverse team of professionals. Discover a career path that aligns with your passion, expertise, and desire to make a difference in healthcare.
+          </p>
         </div>
         {error && (
           <div className="max-w-7xl mx-auto mb-8">
@@ -313,7 +312,7 @@ export default function Career() {
         <div className="max-w-7xl mx-auto border-b border-slate-200">
           {loading
             ? Array.from({ length: CARDS_PER_PAGE }).map((_, i) => <SkeletonCard key={i} />)
-            : opportunities.map((role) => <OpportunityCard key={role.id} role={role} onApply={setApplyModalRole} />)}
+            : opportunities.map((role, idx) => <OpportunityCard key={role.id} role={role} index={(currentPage - 1) * CARDS_PER_PAGE + idx} onApply={setApplyModalRole} />)}
         </div>
         {!loading && !error && opportunities.length === 0 && (
           <div className="max-w-7xl mx-auto text-center py-24">
@@ -441,7 +440,7 @@ export default function Career() {
                     {applyErrors.resume && <p className="text-red-500 text-xs mt-2 text-center">{applyErrors.resume}</p>}
                   </div>
                   <div className="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-100">
-                    <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">Passport Photo <span className="text-red-500">*</span></label>
+                    <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-1.5 sm:mb-2">Passport Size Photo <span className="text-red-500">*</span></label>
                     <p className="text-[10px] sm:text-xs text-slate-500 mb-3 sm:mb-4">JPG, PNG, WEBP (Max 3MB)</p>
                     <input
                       type="file"

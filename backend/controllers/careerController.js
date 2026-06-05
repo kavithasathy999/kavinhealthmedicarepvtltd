@@ -257,12 +257,12 @@ exports.getOpportunityById = async (req, res) => {
 
 exports.createOpportunity = async (req, res) => {
     try {
-        const { title, description, color_from, color_to, display_order, is_active } = req.body;
+        const { title, description, color_from, color_to, display_order, is_active, meta_title, meta_description, meta_keywords } = req.body;
         if (!title || !description) {
             return res.status(400).json({ success: false, message: 'Title and description are required' });
         }
         const [result] = await db.promise().query(
-            'INSERT INTO career_opportunities (title, description, color_from, color_to, display_order, is_active) VALUES (?, ?, ?, ?, ?, ?)',
+            'INSERT INTO career_opportunities (title, description, color_from, color_to, display_order, is_active, meta_title, meta_description, meta_keywords) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
             [
                 title,
                 description,
@@ -270,6 +270,9 @@ exports.createOpportunity = async (req, res) => {
                 color_to || 'to-cyan-400',
                 display_order || 0,
                 is_active !== undefined ? is_active : 1,
+                meta_title || '',
+                meta_description || '',
+                meta_keywords || ''
             ]
         );
         const [newRow] = await db.promise().query('SELECT * FROM career_opportunities WHERE id = ?', [result.insertId]);
@@ -282,14 +285,14 @@ exports.createOpportunity = async (req, res) => {
 
 exports.updateOpportunity = async (req, res) => {
     try {
-        const { title, description, color_from, color_to, display_order, is_active } = req.body;
+        const { title, description, color_from, color_to, display_order, is_active, meta_title, meta_description, meta_keywords } = req.body;
         const id = req.params.id;
         const [existing] = await db.promise().query('SELECT * FROM career_opportunities WHERE id = ?', [id]);
         if (existing.length === 0) {
             return res.status(404).json({ success: false, message: 'Not found' });
         }
         await db.promise().query(
-            'UPDATE career_opportunities SET title=?, description=?, color_from=?, color_to=?, display_order=?, is_active=? WHERE id=?',
+            'UPDATE career_opportunities SET title=?, description=?, color_from=?, color_to=?, display_order=?, is_active=?, meta_title=?, meta_description=?, meta_keywords=? WHERE id=?',
             [
                 title || existing[0].title,
                 description || existing[0].description,
@@ -297,6 +300,9 @@ exports.updateOpportunity = async (req, res) => {
                 color_to || existing[0].color_to,
                 display_order !== undefined ? display_order : existing[0].display_order,
                 is_active !== undefined ? is_active : existing[0].is_active,
+                meta_title !== undefined ? meta_title : existing[0].meta_title,
+                meta_description !== undefined ? meta_description : existing[0].meta_description,
+                meta_keywords !== undefined ? meta_keywords : existing[0].meta_keywords,
                 id,
             ]
         );

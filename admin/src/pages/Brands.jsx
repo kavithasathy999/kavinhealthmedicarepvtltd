@@ -17,8 +17,8 @@ export default function Brands() {
   const [editFile, setEditFile] = useState(null);
   const [editPreview, setEditPreview] = useState(null);
   const [editType, setEditType] = useState('Our Esteemed PMc');
-  
-  const imagesPerPage = 8;
+
+  const imagesPerPage = 10;
 
   const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
@@ -27,7 +27,7 @@ export default function Brands() {
       const res = await fetch(`${baseUrl}/api/brands?type=${selectedType}`);
       const data = await res.json();
       setBrands(data);
-      setCurrentPage(1); 
+      setCurrentPage(1);
     } catch (err) {
       console.error('Error fetching brands:', err);
     }
@@ -165,14 +165,14 @@ export default function Brands() {
       <ToastContainer position='top-right' autoClose={1500} />
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
         <div>
-          <h1 className="text-2xl font-black text-slate-800 tracking-tight">
+          <h1 className="text-3xl font-black text-slate-800 tracking-tight">
             Brands Management
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-[#50ad77] mt-1">
             Upload and manage slider images.
           </p>
         </div>
-        
+
         <button
           onClick={() => setIsAddModalOpen(true)}
           className="bg-[#50ad77] hover:bg-[#419263] text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-[#50ad77]/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 w-full md:w-auto shrink-0"
@@ -181,14 +181,14 @@ export default function Brands() {
         </button>
       </div>
 
-      <div className="w-full md:w-72 mb-4">
-        <label className="block text-sm font-semibold text-slate-700 mb-2">
+      <div className="w-full md:w-72 mb-4 md:ml-auto">
+        <label className="block text-sm font-semibold text-slate-700 mb-2 text-center">
           Select Category
         </label>
         <select
           value={selectedType}
           onChange={(e) => setSelectedType(e.target.value)}
-          className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#50ad77]/20 focus:border-[#50ad77] transition-all shadow-sm"
+          className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#50ad77]/20 focus:border-[#50ad77] transition-all shadow-sm text-center"
         >
           <option value="Our Esteemed PMc">Our Esteemed PMCs</option>
           <option value="Our Esteemed Clients">Our Esteemed Clients</option>

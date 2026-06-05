@@ -59,7 +59,7 @@ const Statssection = () => {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-16 sm:mb-20 lg:mb-24">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {[...Array(4)].map((_, i) => (
           <div
             key={i}
@@ -78,7 +78,7 @@ const Statssection = () => {
   return (
     <div
       ref={sectionRef}
-      className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-16 sm:mb-20 lg:mb-24"
+      className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
     >
       {stats.map((stat, idx) => (
         <div

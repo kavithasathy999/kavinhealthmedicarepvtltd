@@ -13,7 +13,8 @@ const blogRoutes = require("./routes/blogRoutes");
 const testimonialsRoutes = require("./routes/testimonialsRoutes");
 const contactRoutes = require('./routes/contactRoutes');
 const serviceRoutes = require('./routes/serviceRoutes');
-const investorsRelationsRoutes = require('./routes/investorsRelationsRoutes');
+const resourceRepositoryRoutes = require('./routes/resourceRepositoryRoutes');
+const metaTagsRoutes = require('./routes/metaTags');
 const app = express();
 
 const allowedOrigins = [
@@ -47,7 +48,8 @@ app.use("/api/blogs", blogRoutes);
 app.use("/api/testimonials", testimonialsRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/services', serviceRoutes);
-app.use('/api/investors-relations', investorsRelationsRoutes);
+app.use('/api/resource-repository', resourceRepositoryRoutes);
+app.use('/api/meta-tags', metaTagsRoutes);
 app.use("/admin", adminRoutes);
 app.use("/brands", brandsRoutes);
 app.use("/banner", bannerRoutes);
@@ -57,7 +59,8 @@ app.use("/blogs", blogRoutes);
 app.use("/testimonials", testimonialsRoutes);
 app.use('/contact', contactRoutes);
 app.use('/services', serviceRoutes);
-app.use('/investors-relations', investorsRelationsRoutes);
+app.use('/resource-repository', resourceRepositoryRoutes);
+app.use('/meta-tags', metaTagsRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend Running");

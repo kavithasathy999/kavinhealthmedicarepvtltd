@@ -14,6 +14,9 @@ export default function Blogs() {
   const [readTime, setReadTime] = useState('1 Minute Read');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [metaTitle, setMetaTitle] = useState('');
+  const [metaDescription, setMetaDescription] = useState('');
+  const [metaKeywords, setMetaKeywords] = useState('');
   const [blogToEdit, setBlogToEdit] = useState(null);
   const [editFile, setEditFile] = useState(null);
   const [editPreview, setEditPreview] = useState(null);
@@ -83,6 +86,9 @@ export default function Blogs() {
     formData.append('read_time', readTime);
     formData.append('title', title);
     formData.append('description', description);
+    formData.append('meta_title', metaTitle);
+    formData.append('meta_description', metaDescription);
+    formData.append('meta_keywords', metaKeywords);
     formData.append('image', file);
 
     setLoading(true);
@@ -114,6 +120,9 @@ export default function Blogs() {
     setReadTime('1 Minute Read');
     setTitle('');
     setDescription('');
+    setMetaTitle('');
+    setMetaDescription('');
+    setMetaKeywords('');
     setIsAddModalOpen(false);
   };
 
@@ -148,6 +157,9 @@ export default function Blogs() {
     setReadTime(blog.read_time || '1 Minute Read');
     setTitle(blog.title || '');
     setDescription(blog.description || '');
+    setMetaTitle(blog.meta_title || '');
+    setMetaDescription(blog.meta_description || '');
+    setMetaKeywords(blog.meta_keywords || '');
     setEditFile(null);
     setEditPreview(`${baseUrl}${blog.image_url}`);
     setIsEditModalOpen(true);
@@ -174,6 +186,9 @@ export default function Blogs() {
     formData.append('read_time', readTime);
     formData.append('title', title);
     formData.append('description', description);
+    formData.append('meta_title', metaTitle);
+    formData.append('meta_description', metaDescription);
+    formData.append('meta_keywords', metaKeywords);
     if (editFile) {
       formData.append('image', editFile);
     }
@@ -210,10 +225,10 @@ export default function Blogs() {
 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
           <div>
-            <h1 className="text-2xl font-black text-slate-800 tracking-tight">
+            <h1 className="text-3xl font-black text-slate-800 tracking-tight">
               Blogs Management
             </h1>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="text-sm text-[#50ad77] mt-1">
               Create and manage premium articles.
             </p>
           </div>
@@ -425,6 +440,40 @@ export default function Blogs() {
                 </div>
 
                 <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Meta Title</label>
+                  <input
+                    type="text"
+                    value={metaTitle}
+                    onChange={(e) => setMetaTitle(e.target.value)}
+                    maxLength={25}
+                    placeholder="SEO Meta Title"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-[#50ad77] focus:ring-2 focus:ring-[#50ad77]/20 outline-none transition-all text-sm text-slate-700"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Meta Description</label>
+                  <textarea
+                    value={metaDescription}
+                    onChange={(e) => setMetaDescription(e.target.value)}
+                    placeholder="SEO Meta Description"
+                    rows="2"
+                    maxLength={50}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-[#50ad77] focus:ring-2 focus:ring-[#50ad77]/20 outline-none transition-all text-sm text-slate-700 resize-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Meta Keywords</label>
+                  <input
+                    type="text"
+                    value={metaKeywords}
+                    onChange={(e) => setMetaKeywords(e.target.value)}
+                    maxLength={25}
+                    placeholder="SEO Meta Keywords (comma separated)"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-[#50ad77] focus:ring-2 focus:ring-[#50ad77]/20 outline-none transition-all text-sm text-slate-700"
+                  />
+                </div>
+
+                <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">Blog Image (Max 3MB)</label>
                   <div className="relative group">
                     <input
@@ -531,6 +580,40 @@ export default function Blogs() {
                     onChange={(e) => setDescription(e.target.value)}
                     rows="4"
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-sm text-slate-700 resize-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Meta Title</label>
+                  <input
+                    type="text"
+                    value={metaTitle}
+                    onChange={(e) => setMetaTitle(e.target.value)}
+                    maxLength={25}
+                    placeholder="SEO Meta Title"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-sm text-slate-700"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Meta Description</label>
+                  <textarea
+                    value={metaDescription}
+                    onChange={(e) => setMetaDescription(e.target.value)}
+                    placeholder="SEO Meta Description"
+                    rows="2"
+                    maxLength={50}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-sm text-slate-700 resize-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Meta Keywords</label>
+                  <input
+                    type="text"
+                    value={metaKeywords}
+                    onChange={(e) => setMetaKeywords(e.target.value)}
+                    maxLength={25}
+                    placeholder="SEO Meta Keywords (comma separated)"
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-sm text-slate-700"
                   />
                 </div>
 

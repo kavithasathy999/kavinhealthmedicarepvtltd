@@ -14,15 +14,15 @@ exports.getAllBlogs = (req, res) => {
 };
 
 exports.createBlog = (req, res) => {
-  const { blog_date, read_time, title, description } = req.body;
+  const { blog_date, read_time, title, description, meta_title, meta_description, meta_keywords } = req.body;
   if (!req.file) {
     return res.status(400).json({ error: 'Image is required' });
   }
 
   const imageUrl = `/uploads/blogs/${req.file.filename}`;
-  const query = 'INSERT INTO blogs (blog_date, image_url, read_time, title, description) VALUES (?, ?, ?, ?, ?)';
+  const query = 'INSERT INTO blogs (blog_date, image_url, read_time, title, description, meta_title, meta_description, meta_keywords) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
 
-  db.query(query, [blog_date, imageUrl, read_time, title, description], (err, results) => {
+  db.query(query, [blog_date, imageUrl, read_time, title, description, meta_title || '', meta_description || '', meta_keywords || ''], (err, results) => {
     if (err) {
       console.error(err);
       return res.status(500).json({ error: 'Database error' });
@@ -33,7 +33,7 @@ exports.createBlog = (req, res) => {
 
 exports.updateBlog = (req, res) => {
   const { id } = req.params;
-  const { blog_date, read_time, title, description } = req.body;
+  const { blog_date, read_time, title, description, meta_title, meta_description, meta_keywords } = req.body;
   const newImage = req.file;
 
   const getBlogQuery = 'SELECT image_url FROM blogs WHERE id = ?';
@@ -49,8 +49,8 @@ exports.updateBlog = (req, res) => {
       }
       imageUrl = `/uploads/blogs/${newImage.filename}`;
     }
-    const updateQuery = 'UPDATE blogs SET blog_date = ?, image_url = ?, read_time = ?, title = ?, description = ? WHERE id = ?';
-    db.query(updateQuery, [blog_date, imageUrl, read_time, title, description, id], (err) => {
+    const updateQuery = 'UPDATE blogs SET blog_date = ?, image_url = ?, read_time = ?, title = ?, description = ?, meta_title = ?, meta_description = ?, meta_keywords = ? WHERE id = ?';
+    db.query(updateQuery, [blog_date, imageUrl, read_time, title, description, meta_title || '', meta_description || '', meta_keywords || '', id], (err) => {
       if (err) {
         console.error(err);
         return res.status(500).json({ error: 'Database error' });

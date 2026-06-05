@@ -19,7 +19,7 @@ const getWordLimitError = (label, value, limit) =>
 export default function Banner() {
   const [slides, setSlides] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
 
   const [activeTab, setActiveTab] = useState(0);
   const [showForm, setShowForm] = useState(false);

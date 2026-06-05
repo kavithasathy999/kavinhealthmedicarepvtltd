@@ -9,10 +9,11 @@ import Stats from './pages/Stats';
 import Services from './pages/Services';
 import Career from './pages/Career';
 import Applications from './pages/Applications';
-import InvestorsRelations from './pages/InvestorsRelations';
+import ResourceRepository from './pages/ResourceRepository';
 import Blogs from './pages/Blogs';
 import Testimonials from './pages/Testimonials';
 import Contactmanagement from './pages/Contactmanagement';
+import MetaTagsManagement from './pages/MetaTagsManagement';
 import { ToastContainer, toast } from "react-toastify";
 import { LogOut, Upload, User } from 'lucide-react';
 import "react-toastify/dist/ReactToastify.css";
@@ -142,10 +143,12 @@ function App() {
         <Route path="/services" element={<AdminLayout><Services /></AdminLayout>} />
         <Route path="/career" element={<AdminLayout><Career /></AdminLayout>} />
         <Route path="/applications" element={<AdminLayout><Applications /></AdminLayout>} />
-        <Route path="/investorsrelations" element={<AdminLayout><InvestorsRelations /></AdminLayout>} />
+        <Route path="/resourcerepository" element={<AdminLayout><ResourceRepository /></AdminLayout>} />
+        <Route path="/investorsrelations" element={<Navigate to="/resourcerepository" replace />} />
         <Route path="/blogs" element={<AdminLayout><Blogs /></AdminLayout>} />
         <Route path="/testimonials" element={<AdminLayout><Testimonials /></AdminLayout>} />
         <Route path="/contact-enquiries" element={<AdminLayout><Contactmanagement /></AdminLayout>} />
+        <Route path="/meta-tags" element={<AdminLayout><MetaTagsManagement /></AdminLayout>} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>

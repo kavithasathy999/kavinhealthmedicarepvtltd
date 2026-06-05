@@ -132,18 +132,18 @@ const Header = ({ services: propServices }) => {
         {/* ========================================================================= */}
         <nav className="hidden xl:flex items-center gap-8 text-sm font-semibold text-slate-600">
           <Link to="/" onClick={handleNavClick} className={isActive("/") ? "text-[#50ad77]" : "text-slate-600 hover:text-[#50ad77] transition-colors"}>Home</Link>
-          <Link to="/aboutus" onClick={handleNavClick} className={isActive("/aboutus") ? "text-[#50ad77]" : "text-slate-600 hover:text-[#50ad77] transition-colors"}>About</Link>
+          <Link to="/aboutus" onClick={handleNavClick} className={isActive("/aboutus") ? "text-[#50ad77]" : "text-slate-600 hover:text-[#50ad77] transition-colors"}>About Us</Link>
           <Link to="/career" onClick={handleNavClick} className={isActive("/career") ? "text-[#50ad77]" : "text-slate-600 hover:text-[#50ad77] transition-colors"}>Careers</Link>
-          <div 
+          <div
             ref={desktopDropdownRef}
             className="relative py-2"
             onMouseEnter={() => !isDropdownLocked && setIsDropdownOpen(true)}
             onMouseLeave={() => !isDropdownLocked && setIsDropdownOpen(false)}
           >
-            <button 
+            <button
               type="button"
-              onClick={(e) => { 
-                e.preventDefault(); 
+              onClick={(e) => {
+                e.preventDefault();
                 setIsDropdownLocked(!isDropdownLocked);
                 setIsDropdownOpen(!isDropdownLocked);
               }}
@@ -184,7 +184,7 @@ const Header = ({ services: propServices }) => {
               </div>
             )}
           </div>
-          <Link to="/investorsrelations" onClick={handleNavClick} className={isActive("/investorsrelations") ? "text-[#50ad77]" : "text-slate-600 hover:text-[#50ad77] transition-colors"}>Investor's Relations</Link>
+          <Link to="/resourcerepository" onClick={handleNavClick} className={isActive("/resourcerepository") ? "text-[#50ad77]" : "text-slate-600 hover:text-[#50ad77] transition-colors"}>Resource Repository</Link>
           <Link to="/blogsandarticles" onClick={handleNavClick} className={isActive("/blogsandarticles") ? "text-[#50ad77]" : "text-slate-600 hover:text-[#50ad77] transition-colors"}>Blogs</Link>
           <Link to="/contact" onClick={handleNavClick} className={isActive("/contact") ? "text-[#50ad77]" : "text-slate-600 hover:text-[#50ad77] transition-colors"}>Contact</Link>
         </nav>
@@ -231,7 +231,7 @@ const Header = ({ services: propServices }) => {
             className={isActive("/aboutus") ? "block font-semibold text-[#50ad77] px-2 py-1" : "block font-semibold text-slate-700 px-2 py-1 hover:text-[#50ad77]"}
             onClick={() => { setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
           >
-            About
+            About Us
           </Link>
 
           <Link
@@ -288,11 +288,11 @@ const Header = ({ services: propServices }) => {
           </div>
 
           <Link
-            to="/investorsrelations"
-            className={isActive("/investorsrelations") ? "block font-semibold text-[#50ad77] px-2 py-1" : "block font-semibold text-slate-700 px-2 py-1 hover:text-[#50ad77]"}
+            to="/resourcerepository"
+            className={isActive("/resourcerepository") ? "block font-semibold text-[#50ad77] px-2 py-1" : "block font-semibold text-slate-700 px-2 py-1 hover:text-[#50ad77]"}
             onClick={() => { setIsMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
           >
-            Investor's Relations
+            Resource Repository
           </Link>
 
           <Link

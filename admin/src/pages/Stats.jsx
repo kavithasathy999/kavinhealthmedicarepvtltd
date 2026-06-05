@@ -329,10 +329,10 @@ const Stats = () => {
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
                 <div className="flex items-center justify-between mb-6 sm:mb-8">
                     <div>
-                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
+                        <h1 className="text-3xl font-black text-slate-800 tracking-tight">
                             Stats Management
                         </h1>
-                        <p className="text-gray-500 text-sm mt-0.5">
+                        <p className="text-[#50ad77] text-sm mt-0.5">
                             {stats.length} stat{stats.length !== 1 ? "s" : ""} total
                         </p>
                     </div>

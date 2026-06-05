@@ -14,7 +14,7 @@ import FloatingButtons from '../components/FloatingButtons';
 const Home = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [blogs, setBlogs] = useState([]);
-  
+
   const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
   useEffect(() => {
@@ -31,54 +31,6 @@ const Home = () => {
     }
   };
 
-  const testimonials = [
-    {
-      id: 1,
-      name: "Dr. Anjali Sharma",
-      role: "Chief Medical Officer",
-      quote: "Working with Kavin healthcare has significantly improved our hospital's operational efficiency. Their team provides excellent guidance and quick support whenever needed. We highly recommend them.",
-    },
-    {
-      id: 2,
-      name: "Rajesh Kumar",
-      role: "Hospital Administrator",
-      quote: "Kavin healthcare consistently provides high-performance solutions that stand up to tough challenges. Their professionalism and commitment to patient-centered care set them apart.",
-    },
-    {
-      id: 3,
-      name: "Priya Varma",
-      role: "Clinical Lead",
-      quote: "Our experience with Kavin healthcare has been outstanding. Their approach is versatile and well-planned, perfect for both large-scale hospital projects. Their support is invaluable.",
-    },
-    {
-      id: 4,
-      name: "Dr. Vikram Singh",
-      role: "Director of Operations",
-      quote: "The team at Kavin healthcare understands the complexities of healthcare management perfectly. Their strategic insights helped us streamline our patient care processes effectively.",
-    },
-    {
-      id: 5,
-      name: "Sunitha Reddy",
-      role: "Healthcare Consultant",
-      quote: "Exceptional service and deep domain expertise. Kavin healthcare turned our vision into reality with their meticulous planning and implementation skills.",
-    },
-    {
-      id: 6,
-      name: "Amit Patel",
-      role: "Hospital Promoter",
-      quote: "A reliable partner for hospital commissioning. Their end-to-end support throughout the project lifecycle was truly commendable and professional.",
-    },
-  ];
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
-  const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-  const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800 antialiased selection:bg-[#50ad77]/20 selection:text-[#50ad77] overflow-x-hidden">
       <Topbar />
@@ -88,7 +40,7 @@ const Home = () => {
       <InsuranceAdvisor />
       <Esteemedpmcslider />
       <HealthcareBanner />
-      <section className="py-20 px-4 sm:px-8 bg-white">
+      <section className="py-8 md:py-16 lg:py-16 px-4 sm:px-8 bg-white">
         <div className="mx-auto max-w-7xl space-y-16">
           <div className="text-center sm:text-left">
             <div className="inline-flex items-center gap-2 border-l-4 border-[#50ad77] pl-3 mb-3">
@@ -96,10 +48,10 @@ const Home = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               <div>
-                <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight">
-                  Blogs & Articles
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 leading-tight">
+                  Blogs & <span className="text-[#50ad77]">Articles</span>
                 </h2>
-                <p className="mt-4 text-slate-500 max-w-lg">
+                <p className="mt-4 text-base text-slate-500 max-w-lg">
                   Actionable guidance, industry insights, and practical tips to help you work better and live healthier.
                 </p>
               </div>
@@ -150,10 +102,10 @@ const Home = () => {
                   <div className="text-[11px] font-extrabold text-[#50ad77] uppercase tracking-widest">
                     {post.read_time?.toUpperCase()}
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#50ad77] transition-colors font-serif min-h-[56px] line-clamp-2 leading-snug">
+                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#50ad77] transition-colors font-sans min-h-[56px] line-clamp-2 leading-snug">
                     {post.title}
                   </h3>
-                  <p className="text-slate-500 text-sm leading-relaxed line-clamp-3 pb-4">
+                  <p className="text-slate-500 text-base leading-relaxed line-clamp-3 pb-4">
                     {post.description}
                   </p>
                 </div>
