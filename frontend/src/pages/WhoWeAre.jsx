@@ -136,30 +136,21 @@ const WhoWeAre = () => {
               At Kavin Health and Medicare Pvt Ltd, we understand that a healthy workforce is the foundation of a productive and thriving workplace. Our Occupational Health Centre (OHC) is a dedicated wing that offers comprehensive on-site healthcare services to safeguard the well-being of employees and support industries in meeting statutory health compliance.
             </p>
           </div>
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-14 items-center">
-            <div className={`lg:col-span-6 relative ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'} transition-all duration-1000 delay-200`}>
-              <div className="relative overflow-hidden rounded-2xl shadow-2xl shadow-slate-900/10 border-[6px] border-white bg-slate-200 aspect-[4/3] group">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-stretch">
+            <div className={`relative ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'} transition-all duration-1000 delay-200 h-full`}>
+              <div className="relative overflow-hidden rounded-2xl shadow-xl shadow-slate-900/10 border-[6px] border-white bg-white group flex items-center justify-center h-full w-full">
                 <img
                   src={img4}
                   alt="Occupational Health Centre Ward Setup"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="w-full h-full object-fill transition-transform duration-700"
                   onError={(e) => {
                     e.target.src = "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=1000";
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </div>
-              <div className="absolute -bottom-6 left-4 right-4 sm:left-auto sm:right-6 bg-white/95 backdrop-blur-md p-4 sm:p-5 rounded-2xl shadow-xl border border-slate-100/80 sm:max-w-xs flex items-center gap-4 hover:scale-[1.03] transition-all duration-300">
-                <div className="h-12 w-12 rounded-xl bg-blue-600/10 text-blue-600 flex items-center justify-center shrink-0 shadow-inner">
-                  <Building size={24} />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-slate-900">Pan-India Support</h4>
-                  <p className="text-base text-slate-500 font-medium mt-0.5">Project-based deployments across Tamil Nadu & nationwide.</p>
-                </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/10 via-transparent to-transparent opacity-0 transition-opacity duration-300 pointer-events-none" />
               </div>
             </div>
-            <div className={`lg:col-span-6 space-y-4 sm:space-y-6 pt-4 sm:pt-0 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'} transition-all duration-1000 delay-200`}>
+            <div className={`space-y-6 pt-4 sm:pt-0 flex flex-col justify-center ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'} transition-all duration-1000 delay-200`}>
               <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight sm:text-3xl lg:text-4xl leading-snug">
                 Proactive Clinical Care & Preventive Interventions
               </h3>

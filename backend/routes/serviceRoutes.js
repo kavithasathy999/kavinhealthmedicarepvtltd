@@ -4,9 +4,16 @@ const multer = require('multer');
 const path = require('path');
 const serviceController = require('../controllers/serviceController');
 
+const fs = require('fs');
+
+const uploadDir = path.join(__dirname, '../uploads');
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
     cb(null, 'service-' + Date.now() + path.extname(file.originalname));

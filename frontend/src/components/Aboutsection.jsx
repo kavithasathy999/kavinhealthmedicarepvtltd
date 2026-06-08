@@ -17,14 +17,14 @@ export default function AboutSection() {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setIsVisible(true); 
+          setIsVisible(true);
         } else {
-          setIsVisible(false); 
+          setIsVisible(false);
         }
       },
       {
         root: null,
-        threshold: 0.15, 
+        threshold: 0.15,
       }
     );
 
@@ -99,28 +99,28 @@ export default function AboutSection() {
             <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 lg:gap-16 items-center">
               <div className="md:col-span-5 lg:col-span-5 relative flex justify-center md:justify-start w-full">
                 <div className="relative grid w-full max-w-[320px] sm:max-w-[460px] md:max-w-[520px] grid-cols-2 gap-4 sm:gap-5">
-                  <div className={`col-span-2 aspect-[4/3] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border-4 border-white z-10 bg-slate-100 transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-95'
+                  <div className={`col-span-2 aspect-[4/3] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border-4 border-white z-10 bg-white transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-95'
                     }`}>
                     <img
                       src={img1}
                       alt="Doctor examining lab report"
-                      className="w-full h-full object-cover bg-white transition-transform duration-700"
+                      className="w-full h-full object-fill bg-white transition-transform duration-700"
                     />
                   </div>
-                  <div className={`aspect-square rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border-4 border-white animate-float-y z-20 bg-slate-100 transition-all duration-1000 delay-500 ease-out ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'
+                  <div className={`aspect-square rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border-4 border-white animate-float-y z-20 bg-white transition-all duration-1000 delay-500 ease-out ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'
                     }`}>
                     <img
                       src={img3}
                       alt="Scientist looking in microscope"
-                      className="w-full h-full object-cover bg-white"
+                      className="w-full h-full object-fill bg-white"
                     />
                   </div>
-                  <div className={`aspect-square rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border-4 border-white animate-float-x z-20 bg-slate-100 transition-all duration-1000 delay-300 ease-out ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'
+                  <div className={`aspect-square rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border-4 border-white animate-float-x z-20 bg-white transition-all duration-1000 delay-300 ease-out ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'
                     }`}>
                     <img
                       src={img2}
                       alt="Lab tube sample testing"
-                      className="w-full h-full object-cover bg-white"
+                      className="w-full h-full object-fill bg-white"
                     />
                   </div>
                   <div className="absolute -bottom-4 -left-4 w-24 h-24 sm:w-32 sm:h-32 opacity-20 -z-10 text-slate-400">
