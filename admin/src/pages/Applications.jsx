@@ -152,6 +152,8 @@ export default function Applications() {
     const [deleteTarget, setDeleteTarget] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
     const [previewType, setPreviewType] = useState(null);
+    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+    const [applicationToView, setApplicationToView] = useState(null);
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
@@ -176,6 +178,11 @@ export default function Applications() {
     }, []);
 
     useEffect(() => { fetchApplications(); }, [fetchApplications]);
+
+    const handleView = (item) => {
+        setApplicationToView(item);
+        setIsViewModalOpen(true);
+    };
 
     const handleSaved = (updated) => {
         setEditItem(null);
@@ -315,6 +322,7 @@ export default function Applications() {
                                             </td>
                                             <td className="px-5 py-4 whitespace-nowrap text-right">
                                                 <div className="flex items-center justify-end gap-2">
+                                                    <button onClick={() => handleView(item)} className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 hover:bg-[#50ad77] hover:text-white transition-colors">View</button>
                                                     <button onClick={() => setEditItem(item)} className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors">Edit</button>
                                                     <button onClick={() => setDeleteTarget(item)} className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-50 text-red-600 hover:bg-red-100 transition-colors">Delete</button>
                                                 </div>
@@ -359,6 +367,97 @@ export default function Applications() {
                 />
             )}
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+
+            {isViewModalOpen && applicationToView && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setIsViewModalOpen(false)}>
+                    <div className="bg-white rounded-3xl w-full max-w-2xl flex flex-col max-h-[90vh] overflow-y-auto shadow-2xl animate-slideUp" onClick={(e) => e.stopPropagation()}>
+                        <div className="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                            <div>
+                                <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                                    <svg className="w-6 h-6 text-[#50ad77]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                    View Application Details
+                                </h2>
+                                <p className="text-sm text-slate-500 mt-0.5">Role Applied: {applicationToView.career_title || 'Unknown Role'}</p>
+                            </div>
+                            <button
+                                onClick={() => setIsViewModalOpen(false)}
+                                className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-700 transition-colors text-xl font-bold"
+                            >
+                                &times;
+                            </button>
+                        </div>
+                        
+                        <div className="p-8 space-y-6">
+                            <div className="flex flex-col sm:flex-row items-center gap-6 pb-6 border-b border-slate-100">
+                                {applicationToView.photo_url ? (
+                                    <img src={applicationToView.photo_url} alt={applicationToView.fullname} className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg shrink-0" />
+                                ) : (
+                                    <div className="w-24 h-24 rounded-full bg-[#50ad77]/10 flex items-center justify-center shrink-0 border border-[#50ad77]/20 shadow-sm">
+                                        <span className="text-[#50ad77] text-3xl font-bold">{applicationToView.fullname.charAt(0).toUpperCase()}</span>
+                                    </div>
+                                )}
+                                <div className="text-center sm:text-left">
+                                    <h3 className="text-xl font-bold text-slate-900">{applicationToView.fullname}</h3>
+                                    <p className="text-[#50ad77] font-semibold text-sm mt-0.5">{applicationToView.career_title || 'Unknown Role'}</p>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Email Address</label>
+                                    <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm text-slate-800 font-medium break-all">
+                                        {applicationToView.email}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Contact Number</label>
+                                    <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm text-slate-800 font-medium">
+                                        {formatPhone(applicationToView.contact_number)}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Qualification</label>
+                                    <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm text-slate-800 font-medium">
+                                        {applicationToView.qualification}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Attachments</label>
+                                    <div className="flex flex-col gap-2">
+                                        {applicationToView.resume_url ? (
+                                            <button 
+                                                onClick={() => { setIsViewModalOpen(false); setPreviewType('resume'); setPreviewUrl(applicationToView.resume_url); }}
+                                                className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-xl text-sm font-semibold transition-colors w-fit"
+                                            >
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                                Preview Resume
+                                            </button>
+                                        ) : (
+                                            <span className="text-sm text-slate-400 font-medium">No resume attached</span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="pt-4 border-t border-slate-100 flex justify-end shrink-0">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsViewModalOpen(false)}
+                                    className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-semibold transition-colors"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {previewUrl && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={() => setPreviewUrl(null)}>

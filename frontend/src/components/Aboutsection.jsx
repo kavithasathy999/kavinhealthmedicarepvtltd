@@ -146,12 +146,12 @@ export default function AboutSection() {
                   </div>
                   <div className={`space-y-4 text-slate-600 text-sm sm:text-base lg:text-lg leading-relaxed max-w-2xl transition-all duration-700 delay-300 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                     }`}>
-                    <p>
+                    <p className="text-justify [hyphens:auto]">
                       At <strong className="text-slate-900">Kavin Health and Medicare Pvt Ltd</strong>, we understand that a healthy workforce is the foundation of a productive and thriving workplace. Our Occupational Health Centre (OHC) is a dedicated wing that offers comprehensive on-site healthcare services to safeguard the well-being of employees and support industries in meeting statutory health compliance.
                     </p>
                     <p className="flex items-start gap-2">
-                      <span className="text-[#50ad77] mt-1 font-bold">➢</span>
-                      <span>With a clear focus on prevention, early detection, and effective intervention, our OHC services are designed to reduce workplace-related health risks, improve employee wellness, and help organizations adhere to national safety standards such as the <strong className="text-slate-900">Factories Act, BOCW Act</strong>, and relevant industrial health regulations.</span>
+                      <span className="text-[#50ad77] mt-1 font-bold shrink-0">➢</span>
+                      <span className="flex-1 text-justify [hyphens:auto]">With a clear focus on prevention, early detection, and effective intervention, our OHC services are designed to reduce workplace-related health risks, improve employee wellness, and help organizations adhere to national safety standards such as the <strong className="text-slate-900">Factories Act, BOCW Act</strong>, and relevant industrial health regulations.</span>
                     </p>
                   </div>
                   <div className={`pt-2 transition-all duration-700 delay-750 ease-out ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'

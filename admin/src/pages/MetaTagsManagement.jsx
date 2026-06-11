@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
-import { Search, Plus, Edit2, Trash2, Globe } from 'lucide-react';
+import { Search, Plus, Edit2, Trash2, Globe, Eye } from 'lucide-react';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
@@ -19,6 +19,7 @@ export default function MetaTagsManagement() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [selectedTag, setSelectedTag] = useState(null);
   const [services, setServices] = useState([]);
   
@@ -113,6 +114,11 @@ export default function MetaTagsManagement() {
     setIsModalOpen(true);
   };
 
+  const openViewModal = (tag) => {
+    setSelectedTag(tag);
+    setIsViewModalOpen(true);
+  };
+
   const openEditModal = (tag) => {
     setSelectedTag(tag);
     setFormData({
@@ -177,6 +183,19 @@ export default function MetaTagsManagement() {
     } catch (err) {
       toast.error("Error connecting to server");
     }
+  };
+
+  const getPageRouteName = (route) => {
+    const matchedRoute = PAGE_ROUTES.find(r => r.value === route);
+    if (matchedRoute) return matchedRoute.label;
+
+    if (route.startsWith('/services/')) {
+      const slug = route.split('/').pop();
+      const matchedService = services.find(s => createSlug(s.title) === slug);
+      if (matchedService) return matchedService.title;
+    }
+
+    return route;
   };
 
   const mainRoute = formData.page_route.startsWith('/services') ? '/services' : formData.page_route;
@@ -250,7 +269,8 @@ export default function MetaTagsManagement() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-slate-50 border-y border-slate-100">
-                  <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Route</th>
+                  <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">S.No</th>
+                  <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Page Route</th>
                   <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Meta Title</th>
                   <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Meta Description</th>
                   <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Meta Keywords</th>
@@ -258,12 +278,17 @@ export default function MetaTagsManagement() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {currentTags.map((tag) => (
+                {currentTags.map((tag, index) => (
                   <tr key={tag.id} className="hover:bg-slate-50/50 transition-colors">
+                    <td className="py-3 px-4 text-sm text-slate-500 font-medium">
+                      {indexOfFirstItem + index + 1}.
+                    </td>
                     <td className="py-3 px-4">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        {tag.page_route}
-                      </span>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-semibold text-slate-800">
+                          {getPageRouteName(tag.page_route)}
+                        </span>                       
+                      </div>
                     </td>
                     <td className="py-3 px-4 text-sm font-bold text-slate-800 truncate max-w-[200px]" title={tag.meta_title}>
                       {tag.meta_title}
@@ -276,6 +301,13 @@ export default function MetaTagsManagement() {
                     </td>
                     <td className="py-3 px-4 text-right">
                       <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => openViewModal(tag)}
+                          className="p-1.5 text-[#50ad77] bg-[#50ad77]/10 hover:bg-[#50ad77]/20 rounded-lg transition-colors"
+                          title="View"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
                         <button
                           onClick={() => openEditModal(tag)}
                           className="p-1.5 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
@@ -463,6 +495,58 @@ export default function MetaTagsManagement() {
               >
                 Delete
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isViewModalOpen && selectedTag && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto shadow-2xl animate-fade-in">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <Globe className="w-5 h-5 text-[#50ad77]" /> View Meta Tag Details
+              </h3>
+              <button onClick={() => setIsViewModalOpen(false)} className="text-4xl text-slate-400 hover:text-slate-600 transition-colors">
+                ×
+              </button>
+            </div>
+            <div className="p-6 space-y-6">
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Page Route</label>
+                <div className="flex flex-col bg-slate-50 px-4 py-3 rounded-xl border border-slate-100">
+                  <span className="text-sm font-semibold text-slate-800">
+                    {getPageRouteName(selectedTag.page_route)}
+                  </span>
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Meta Title</label>
+                <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm text-slate-800 font-medium">
+                  {selectedTag.meta_title}
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Meta Description</label>
+                <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm text-slate-600 whitespace-pre-wrap leading-relaxed">
+                  {selectedTag.meta_description}
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Meta Keywords</label>
+                <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm text-slate-600">
+                  {selectedTag.meta_keywords || '—'}
+                </div>
+              </div>
+              <div className="pt-4 flex justify-end border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setIsViewModalOpen(false)}
+                  className="px-6 py-2.5 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>

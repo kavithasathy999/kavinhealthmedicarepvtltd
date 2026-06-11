@@ -132,7 +132,7 @@ const WhoWeAre = () => {
               </h2>
               <div className="mt-5 h-1.5 w-24 bg-gradient-to-r from-[#50ad77] to-blue-600 rounded-full" />
             </div>
-            <p className="mt-6 text-base leading-relaxed text-slate-600 font-medium">
+            <p className="mt-6 text-base leading-relaxed text-slate-600 font-medium text-justify [hyphens:auto]">
               At Kavin Health and Medicare Pvt Ltd, we understand that a healthy workforce is the foundation of a productive and thriving workplace. Our Occupational Health Centre (OHC) is a dedicated wing that offers comprehensive on-site healthcare services to safeguard the well-being of employees and support industries in meeting statutory health compliance.
             </p>
           </div>
@@ -154,7 +154,7 @@ const WhoWeAre = () => {
               <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight sm:text-3xl lg:text-4xl leading-snug">
                 Proactive Clinical Care & Preventive Interventions
               </h3>
-              <p className="text-base text-slate-600 leading-relaxed font-medium">
+              <p className="text-base text-slate-600 leading-relaxed font-medium text-justify [hyphens:auto]">
                 With a clear focus on prevention, early detection, and effective intervention, our OHC services are designed to reduce workplace-related health risks, improve employee wellness, and help organizations adhere to national safety standards such as the <strong>Factories Act</strong>, <strong>BOCW Act</strong>, and relevant industrial health regulations.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">

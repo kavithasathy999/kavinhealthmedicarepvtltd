@@ -167,7 +167,7 @@ const Services = () => {
                         {service.title}
                       </h3>
                       <div className="w-12 sm:w-16 h-1 sm:h-1.5 bg-gradient-to-r from-[#50ad77] to-emerald-300 rounded-full mb-4 sm:mb-5" />
-                      <p className="text-gray-600 leading-relaxed whitespace-pre-wrap text-sm sm:text-base">
+                      <p className="text-gray-600 leading-relaxed whitespace-pre-wrap text-sm sm:text-base text-justify [hyphens:auto]">
                         {service.description}
                       </p>
                     </div>

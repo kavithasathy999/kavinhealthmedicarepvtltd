@@ -253,7 +253,7 @@ function OpportunityModal({ item, onClose, onSaved }) {
     );
 }
 
-function OpportunityRow({ item, index, onEdit, onDelete }) {
+function OpportunityRow({ item, index, onView, onEdit, onDelete }) {
     return (
         <tr className="hover:bg-slate-50 border-b border-slate-100 transition-colors">
             <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
@@ -268,6 +268,12 @@ function OpportunityRow({ item, index, onEdit, onDelete }) {
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <div className="flex items-center justify-end gap-2">
+                    <button
+                        onClick={() => onView(item)}
+                        className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 hover:bg-[#50ad77] hover:text-white transition-colors"
+                    >
+                        View
+                    </button>
                     <button
                         onClick={() => onEdit(item)}
                         className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
@@ -292,6 +298,8 @@ export default function Career() {
     const [search, setSearch] = useState('');
     const [modalItem, setModalItem] = useState(undefined);
     const [deleteTarget, setDeleteTarget] = useState(null);
+    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+    const [opportunityToView, setOpportunityToView] = useState(null);
     const [toast, setToast] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
@@ -323,6 +331,11 @@ export default function Career() {
         setModalItem(undefined);
         fetchOpportunities();
         setToast({ message: `Opportunity ${action} successfully!`, type: 'success' });
+    };
+
+    const handleView = (item) => {
+        setOpportunityToView(item);
+        setIsViewModalOpen(true);
     };
 
     const handleDeleteConfirm = async () => {
@@ -441,6 +454,7 @@ export default function Career() {
                                             key={item.id}
                                             item={item}
                                             index={indexOfFirstItem + index}
+                                            onView={handleView}
                                             onEdit={setModalItem}
                                             onDelete={setDeleteTarget}
                                         />
@@ -488,6 +502,98 @@ export default function Career() {
                     onConfirm={handleDeleteConfirm}
                     onCancel={() => setDeleteTarget(null)}
                 />
+            )}
+
+            {isViewModalOpen && opportunityToView && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm px-4" onClick={() => setIsViewModalOpen(false)}>
+                    <div className="bg-white rounded-3xl w-full max-w-2xl flex flex-col max-h-[90vh] overflow-y-auto shadow-2xl animate-slideUp" onClick={(e) => e.stopPropagation()}>
+                        <div className="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                            <div>
+                                <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                                    <svg className="w-6 h-6 text-[#50ad77]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                    View Opportunity Details
+                                </h2>
+                                <p className="text-sm text-slate-500 mt-0.5">Detailed view of job career category</p>
+                            </div>
+                            <button
+                                onClick={() => setIsViewModalOpen(false)}
+                                className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-700 transition-colors text-xl font-bold animate-fade-in"
+                            >
+                                &times;
+                            </button>
+                        </div>
+                        
+                        <div className="p-8 space-y-6">
+                            <div>
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Opportunity Title</label>
+                                <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm font-bold text-slate-800">
+                                    {opportunityToView.title}
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Display Order</label>
+                                    <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm text-slate-800 font-semibold">
+                                        {opportunityToView.display_order}
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Status</label>
+                                    <div>
+                                        <span className={`px-4 py-2.5 rounded-xl text-sm font-bold inline-block ${opportunityToView.is_active ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
+                                            {opportunityToView.is_active ? 'Active' : 'Inactive'}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Description</label>
+                                <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
+                                    {opportunityToView.description}
+                                </div>
+                            </div>
+
+                            <div className="border-t border-slate-100 pt-6">
+                                <h3 className="text-sm font-bold text-slate-700 mb-4 uppercase tracking-wider">SEO Meta Information</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-xs font-semibold text-slate-400 mb-1.5">Meta Title</label>
+                                        <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm text-slate-700 font-medium">
+                                            {opportunityToView.meta_title || '—'}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-semibold text-slate-400 mb-1.5">Meta Keywords</label>
+                                        <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm text-slate-700 font-medium">
+                                            {opportunityToView.meta_keywords || '—'}
+                                        </div>
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label className="block text-xs font-semibold text-slate-400 mb-1.5">Meta Description</label>
+                                        <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
+                                            {opportunityToView.meta_description || '—'}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="pt-4 border-t border-slate-100 flex justify-end shrink-0">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsViewModalOpen(false)}
+                                    className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-semibold transition-colors"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             )}
 
             {toast && (

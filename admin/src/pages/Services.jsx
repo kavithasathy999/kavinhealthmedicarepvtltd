@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { Trash2, Image as ImageIcon, Loader2, Plus, ChevronLeft, ChevronRight, Edit, Search } from 'lucide-react';
+import { Trash2, Image as ImageIcon, Loader2, Plus, ChevronLeft, ChevronRight, Edit, Search, Eye } from 'lucide-react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
@@ -21,6 +21,8 @@ export default function Services() {
     });
     const [editingId, setEditingId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+    const [serviceToView, setServiceToView] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -145,6 +147,11 @@ export default function Services() {
         });
         setImagePreview(`${API_BASE}/uploads/${service.image}`);
         setIsModalOpen(true);
+    };
+
+    const handleView = (service) => {
+        setServiceToView(service);
+        setIsViewModalOpen(true);
     };
 
     const handleDeleteClick = (id) => {
@@ -281,6 +288,13 @@ export default function Services() {
                                             </td>
                                             <td className="px-6 py-4 text-center">
                                                 <div className="flex items-center justify-center gap-2">
+                                                    <button
+                                                        onClick={() => handleView(service)}
+                                                        className="px-3 py-1.5 bg-emerald-50 text-emerald-600 hover:bg-[#50ad77] hover:text-white rounded-lg font-bold text-xs transition-colors flex items-center gap-1"
+                                                        title="View Service"
+                                                    >
+                                                        <Eye size={12} /> View
+                                                    </button>
                                                     <button
                                                         onClick={() => handleEdit(service)}
                                                         className="px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-500 hover:text-white rounded-lg font-bold text-xs transition-colors flex items-center gap-1"
@@ -512,6 +526,87 @@ export default function Services() {
                 }}
                 onConfirm={confirmDelete}
             />
+
+            {isViewModalOpen && serviceToView && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm transition-all duration-300" onClick={() => setIsViewModalOpen(false)}>
+                    <div className="bg-white rounded-2xl w-full max-w-2xl flex flex-col max-h-[90vh] overflow-y-auto shadow-2xl transform transition-all" onClick={(e) => e.stopPropagation()}>
+                        <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
+                            <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                                <Eye className="text-[#50ad77]" /> View Service Details
+                            </h2>
+                            <button
+                                onClick={() => setIsViewModalOpen(false)}
+                                className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-700 transition-colors text-xl font-bold"
+                            >
+                                &times;
+                            </button>
+                        </div>
+                        
+                        <div className="p-6 space-y-6">
+                            {serviceToView.image && !failedImages[serviceToView.id] && (
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Service Image</label>
+                                    <div className="w-full h-48 rounded-xl overflow-hidden border border-slate-200 bg-slate-50 relative">
+                                        <img
+                                            src={`${API_BASE}/uploads/${serviceToView.image}`}
+                                            alt={serviceToView.title}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
+                            <div>
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Service Title</label>
+                                <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm font-bold text-slate-800">
+                                    {serviceToView.title}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Description</label>
+                                <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
+                                    {serviceToView.description}
+                                </div>
+                            </div>
+
+                            <div className="border-t border-slate-100 pt-6">
+                                <h3 className="text-sm font-bold text-slate-700 mb-4 uppercase tracking-wider">SEO Meta Information</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-xs font-semibold text-slate-400 mb-1.5">Meta Title</label>
+                                        <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm text-slate-700 font-medium">
+                                            {serviceToView.meta_title || '—'}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-semibold text-slate-400 mb-1.5">Meta Keywords</label>
+                                        <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm text-slate-700 font-medium">
+                                            {serviceToView.meta_keywords || '—'}
+                                        </div>
+                                    </div>
+                                    <div className="md:col-span-2">
+                                        <label className="block text-xs font-semibold text-slate-400 mb-1.5">Meta Description</label>
+                                        <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
+                                            {serviceToView.meta_description || '—'}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="pt-4 border-t border-slate-100 flex justify-end shrink-0">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsViewModalOpen(false)}
+                                    className="px-5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-semibold transition-colors"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

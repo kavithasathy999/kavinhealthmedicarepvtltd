@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
-import { LuUpload, LuTrash2, LuImage, LuPen, LuX, LuSearch } from 'react-icons/lu';
+import { LuUpload, LuTrash2, LuImage, LuPen, LuX, LuSearch, LuEye } from 'react-icons/lu';
 
 export default function Blogs() {
   const [blogs, setBlogs] = useState([]);
@@ -23,6 +23,8 @@ export default function Blogs() {
   const [blogToDelete, setBlogToDelete] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [blogToView, setBlogToView] = useState(null);
   const blogsPerPage = 8;
 
   const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
@@ -164,6 +166,11 @@ export default function Blogs() {
     setEditFile(null);
     setEditPreview(`${baseUrl}${blog.image_url}`);
     setIsEditModalOpen(true);
+  };
+
+  const openViewModal = (blog) => {
+    setBlogToView(blog);
+    setIsViewModalOpen(true);
   };
 
   const handleEditSubmit = async (e) => {
@@ -323,6 +330,12 @@ export default function Blogs() {
                         </td>
                         <td className="py-3 px-4">
                           <div className="flex items-center justify-center gap-2">
+                            <button
+                              onClick={() => openViewModal(blog)}
+                              className="px-3 py-1.5 bg-emerald-50 text-emerald-600 hover:bg-[#50ad77] hover:text-white rounded-lg font-bold text-xs transition-colors"
+                            >
+                              View
+                            </button>
                             <button
                               onClick={() => openEditModal(blog)}
                               className="px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-500 hover:text-white rounded-lg font-bold text-xs transition-colors"
@@ -697,6 +710,105 @@ export default function Blogs() {
           </div>
         )
       }
+
+      {isViewModalOpen && blogToView && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4" onClick={() => setIsViewModalOpen(false)}>
+          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl relative flex flex-col animate-scale-in" onClick={(e) => e.stopPropagation()}>
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                <LuEye className="text-[#50ad77]" /> View Blog Details
+              </h3>
+              <button 
+                onClick={() => setIsViewModalOpen(false)} 
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-700 transition-colors text-xl font-bold animate-fade-in"
+              >
+                &times;
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {blogToView.image_url && (
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Blog Image</label>
+                  <div className="w-full h-64 rounded-xl overflow-hidden border border-slate-200 bg-slate-50 relative">
+                    <img
+                      src={`${baseUrl}${blogToView.image_url}`}
+                      alt={blogToView.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Date</label>
+                  <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm font-semibold text-slate-800">
+                    {blogToView.blog_date ? new Date(blogToView.blog_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Read Time</label>
+                  <div>
+                    <span className="bg-[#50ad77]/10 text-[#50ad77] px-4 py-2.5 rounded-xl text-sm font-bold inline-block">
+                      {blogToView.read_time}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Blog Title</label>
+                <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm font-bold text-slate-800">
+                  {blogToView.title}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Description</label>
+                <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
+                  {blogToView.description}
+                </div>
+              </div>
+
+              <div className="border-t border-slate-100 pt-6">
+                <h3 className="text-sm font-bold text-slate-700 mb-4 uppercase tracking-wider">SEO Meta Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 mb-1.5">Meta Title</label>
+                    <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm text-slate-700 font-medium">
+                      {blogToView.meta_title || '—'}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 mb-1.5">Meta Keywords</label>
+                    <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm text-slate-700 font-medium">
+                      {blogToView.meta_keywords || '—'}
+                    </div>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-semibold text-slate-400 mb-1.5">Meta Description</label>
+                    <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">
+                      {blogToView.meta_description || '—'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-slate-100 flex justify-end shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIsViewModalOpen(false)}
+                  className="px-5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-semibold transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

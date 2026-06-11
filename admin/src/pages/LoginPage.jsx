@@ -22,8 +22,22 @@ export default function LoginPage() {
   const [success, setSuccess] = useState(false);
 
   React.useEffect(() => {
-    if (localStorage.getItem('isAuthenticated') === 'true') {
-      navigate('/');
+    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+    const loginTimestamp = localStorage.getItem('loginTimestamp');
+    if (isAuthenticated) {
+      if (loginTimestamp) {
+        const elapsed = Date.now() - parseInt(loginTimestamp, 10);
+        if (elapsed > 2 * 60 * 60 * 1000) { // 2 hours session expiry
+          localStorage.removeItem('isAuthenticated');
+          localStorage.removeItem('loginTimestamp');
+        } else {
+          localStorage.setItem('loginTimestamp', Date.now().toString());
+          navigate('/');
+        }
+      } else {
+        localStorage.setItem('loginTimestamp', Date.now().toString());
+        navigate('/');
+      }
     }
   }, [navigate]);
 
@@ -39,6 +53,7 @@ export default function LoginPage() {
       if (username.toLowerCase() === 'admin@gmail.com' && password === 'admin@2026') {
         setSuccess(true);
         localStorage.setItem('isAuthenticated', 'true');
+        localStorage.setItem('loginTimestamp', Date.now().toString());
         setTimeout(() => {
           navigate('/');
         }, 1500);

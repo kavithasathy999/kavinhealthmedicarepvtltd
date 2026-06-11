@@ -233,7 +233,7 @@ const Contact = () => {
             <div className="space-y-2">
               <h5 className="text-sm font-bold text-slate-500 uppercase tracking-widest">Location</h5>
               <p className="text-sm font-bold text-slate-900 leading-relaxed max-w-[280px]">
-                No. 76/6, Achuthan Street, Vazhavachanur, Thandarampattu, Tiruvannamalai, Tamilnadu, India - 606 753.
+                No. 76/6, Achuthan Street, Vazhavachanur, Thandarampattu, Tiruvannamalai, Tamilnadu,<br /> India - 606 753.
               </p>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { Star, Plus, X, AlertCircle, CheckCircle, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { Star, Plus, X, AlertCircle, CheckCircle, ChevronLeft, ChevronRight, Search, Eye } from "lucide-react";
 
 const API_URL = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/testimonials`;
 const BRAND_COLOR = "#50ad77";
@@ -275,6 +275,8 @@ const Testimonials = () => {
   const [showModal, setShowModal] = useState(false);
   const [editData, setEditData] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [testimonialToView, setTestimonialToView] = useState(null);
   const [toast, setToast] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -310,6 +312,11 @@ const Testimonials = () => {
   const handleEdit = (item) => {
     setEditData(item);
     setShowModal(true);
+  };
+
+  const handleView = (item) => {
+    setTestimonialToView(item);
+    setIsViewModalOpen(true);
   };
 
   const handleDeleteConfirm = async () => {
@@ -510,6 +517,12 @@ const Testimonials = () => {
                       <td className="py-4 px-6">
                         <div className="flex items-center justify-center gap-2">
                           <button
+                            onClick={() => handleView(item)}
+                            className="px-3 py-1.5 bg-emerald-50 text-emerald-600 hover:bg-[#50ad77] hover:text-white rounded-lg font-bold text-xs transition-colors"
+                          >
+                            View
+                          </button>
+                          <button
                             onClick={() => handleEdit(item)}
                             className="px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-500 hover:text-white rounded-lg font-bold text-xs transition-colors"
                           >
@@ -552,6 +565,71 @@ const Testimonials = () => {
           )}
         </div>
       </div>
+
+      {isViewModalOpen && testimonialToView && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6" onClick={() => setIsViewModalOpen(false)}>
+          <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl relative flex flex-col animate-scale-in" onClick={(e) => e.stopPropagation()}>
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                <Eye className="text-[#50ad77]" /> View Testimonial
+              </h3>
+              <button 
+                onClick={() => setIsViewModalOpen(false)} 
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-700 transition-colors text-xl font-bold"
+              >
+                &times;
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Star Rating</label>
+                  <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm font-semibold text-slate-800 flex items-center gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`w-4 h-4 ${i < testimonialToView.star_rating ? "fill-yellow-400 text-yellow-400" : "text-slate-200 fill-slate-200"}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Person Name</label>
+                  <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm font-bold text-slate-800">
+                    {testimonialToView.name}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Designation</label>
+                <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm font-semibold text-[#50ad77]">
+                  {testimonialToView.designation}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Description</label>
+                <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
+                  "{testimonialToView.description}"
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-slate-100 flex justify-end shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIsViewModalOpen(false)}
+                  className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-semibold transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

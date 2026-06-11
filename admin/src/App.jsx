@@ -69,6 +69,7 @@ function Topbar() {
 
   const handleLogout = () => {
     localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('loginTimestamp');
     navigate('/login');
   };
 
@@ -112,8 +113,26 @@ function Topbar() {
 }
 
 function AdminLayout({ children }) {
-  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
-  if (!isAuthenticated) {
+  const checkSession = () => {
+    const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+    const loginTimestamp = localStorage.getItem('loginTimestamp');
+    
+    if (!isAuthenticated) return false;
+    
+    if (loginTimestamp) {
+      const elapsed = Date.now() - parseInt(loginTimestamp, 10);
+      if (elapsed > 2 * 60 * 60 * 1000) { // 2 hours session expiry
+        localStorage.removeItem('isAuthenticated');
+        localStorage.removeItem('loginTimestamp');
+        return false;
+      }
+    }
+    
+    localStorage.setItem('loginTimestamp', Date.now().toString());
+    return true;
+  };
+
+  if (!checkSession()) {
     return <Navigate to="/login" replace />;
   }
 

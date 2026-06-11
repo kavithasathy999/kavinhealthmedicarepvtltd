@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
-import { LuUpload, LuTrash2, LuImage, LuPen, LuX, LuChevronLeft, LuChevronRight, LuSearch } from 'react-icons/lu';
+import { LuUpload, LuTrash2, LuImage, LuPen, LuX, LuChevronLeft, LuChevronRight, LuSearch, LuEye } from 'react-icons/lu';
 
 export default function Brands() {
   const [brands, setBrands] = useState([]);
@@ -18,6 +18,8 @@ export default function Brands() {
   const [editFile, setEditFile] = useState(null);
   const [editPreview, setEditPreview] = useState(null);
   const [editType, setEditType] = useState('Our Esteemed PMc');
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [brandToView, setBrandToView] = useState(null);
 
   const imagesPerPage = 10;
 
@@ -120,6 +122,11 @@ export default function Brands() {
     setEditFile(null);
     setEditPreview(`${baseUrl}${brand.image_url}`);
     setIsEditModalOpen(true);
+  };
+
+  const openViewModal = (brand) => {
+    setBrandToView(brand);
+    setIsViewModalOpen(true);
   };
 
   const handleEditSubmit = async (e) => {
@@ -277,6 +284,12 @@ export default function Brands() {
                         <td className="p-3">
                           <div className="flex items-center justify-center gap-2">
                             <button
+                              onClick={() => openViewModal(brand)}
+                              className="px-3 py-1.5 bg-emerald-50 text-emerald-600 hover:bg-[#50ad77] hover:text-white rounded-lg font-bold text-xs transition-colors"
+                            >
+                              View
+                            </button>
+                            <button
                               onClick={() => openEditModal(brand)}
                               className="px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-500 hover:text-white rounded-lg font-bold text-xs transition-colors"
                             >
@@ -369,7 +382,7 @@ export default function Brands() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Update Image (Optional, Max 3MB)</label>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Update Image (Max 3MB)</label>
                 <div className="relative group">
                   <input
                     type="file"
@@ -488,6 +501,56 @@ export default function Brands() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {isViewModalOpen && brandToView && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4" onClick={() => setIsViewModalOpen(false)}>
+          <div className="bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl relative flex flex-col animate-scale-in" onClick={(e) => e.stopPropagation()}>
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+              <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                <LuEye className="text-[#50ad77]" /> View Brand Details
+              </h3>
+              <button 
+                onClick={() => setIsViewModalOpen(false)} 
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-700 transition-colors text-xl font-bold"
+              >
+                &times;
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Category</label>
+                <div>
+                  <span className="bg-[#50ad77]/10 text-[#50ad77] px-4 py-2.5 rounded-xl text-sm font-bold inline-block">
+                    {brandToView.type}
+                  </span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Brand Image</label>
+                <div className="w-full h-48 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-center p-4">
+                  <img
+                    src={`${baseUrl}${brandToView.image_url}`}
+                    alt="Brand"
+                    className="max-w-full max-h-full object-contain rounded-lg"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4 mt-6 border-t border-slate-100 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setIsViewModalOpen(false)}
+                  className="px-5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-semibold transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

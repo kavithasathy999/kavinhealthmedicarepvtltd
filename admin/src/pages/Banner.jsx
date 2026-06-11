@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import DeleteConfirmModal from "../components/DeleteConfirmModal";
-import { ChevronLeft, ChevronRight, Image as ImageIcon, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Image as ImageIcon, Search, Eye } from "lucide-react";
 
 const MAX_BANNER_IMAGE_SIZE = 3 * 1024 * 1024;
 const BANNER_WORD_LIMITS = {
@@ -30,6 +30,8 @@ export default function Banner() {
   const [pendingDelete, setPendingDelete] = useState(null);
   const [draftSlides, setDraftSlides] = useState(slides);
   const [failedImages, setFailedImages] = useState({});
+  const [viewingSlide, setViewingSlide] = useState(null);
+  const [showViewModal, setShowViewModal] = useState(false);
 
   useEffect(() => {
     const fetchCurrentBannerData = async () => {
@@ -241,6 +243,11 @@ export default function Banner() {
     setIsSubmitting(false);
   };
 
+  const handleViewTrigger = (slideItem) => {
+    setViewingSlide(slideItem);
+    setShowViewModal(true);
+  };
+
   const handleEditTrigger = (index) => {
     setDraftSlides(slides);
     setActiveTab(index);
@@ -358,6 +365,13 @@ export default function Banner() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center justify-center gap-3">
+                      <button
+                        type="button"
+                        className="px-3 py-1.5 bg-emerald-50 text-emerald-600 hover:bg-[#50ad77] hover:text-white rounded-lg font-bold text-xs transition-colors"
+                        onClick={() => handleViewTrigger(item)}
+                      >
+                        View
+                      </button>
                       <button type="button" className="px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-500 hover:text-white rounded-lg font-bold text-xs transition-colors" onClick={() => handleEditTrigger(absoluteIndex)}>
                         Edit
                       </button>
@@ -552,6 +566,76 @@ export default function Banner() {
           deleteAction?.();
         }}
       />
+
+      {showViewModal && viewingSlide && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 sm:p-6" onClick={() => setShowViewModal(false)}>
+          <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl relative flex flex-col animate-fade-in" onClick={(e) => e.stopPropagation()}>
+            <div className="px-8 py-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-2">
+                  <Eye className="text-[#50ad77] w-6 h-6" /> View Banner Slide
+                </h2>
+                <p className="text-slate-500 text-sm mt-1 font-medium">Detailed view of the live banner slide</p>
+              </div>
+              <button 
+                type="button" 
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-700 font-bold transition-colors text-xl" 
+                onClick={() => setShowViewModal(false)}
+              >
+                &times;
+              </button>
+            </div>
+
+            <div className="p-8 space-y-6">
+              {viewingSlide.image && (
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Banner Image</label>
+                  <div className="w-full h-64 rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 relative">
+                    <img
+                      src={getImageUrl(viewingSlide.image || viewingSlide.image_path)}
+                      alt={viewingSlide.tag || "Banner view"}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Tag</label>
+                  <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm font-bold text-[#50ad77] whitespace-normal">
+                    {viewingSlide.tag || "—"}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Title</label>
+                  <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm text-slate-800 font-bold whitespace-normal">
+                    {viewingSlide.title || "—"}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Description</label>
+                <div className="bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 text-sm text-slate-600 whitespace-normal leading-relaxed">
+                  {viewingSlide.description || "—"}
+                </div>
+              </div>
+
+              <div className="pt-4 mt-6 border-t border-slate-100 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setShowViewModal(false)}
+                  className="px-6 py-2.5 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-colors text-sm"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

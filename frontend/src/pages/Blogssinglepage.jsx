@@ -130,12 +130,7 @@ export default function Blogssinglepage() {
           )}
         </div>
         <article className="prose prose-slate max-w-none">
-          <p className="text-lg leading-8 text-slate-600">{blog.description}</p>
-          <p className="text-base leading-8 text-slate-600">
-            Our healthcare guidance is designed to make important medical and wellness decisions easier to understand.
-            Use these insights as a practical starting point, and connect with a qualified healthcare professional for
-            advice tailored to your needs.
-          </p>
+          <p className="text-lg leading-8 text-slate-600 text-justify [hyphens:auto]">{blog.description}</p>
         </article>
         <Link
           to={backLink.to}
