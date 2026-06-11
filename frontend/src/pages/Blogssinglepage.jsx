@@ -5,6 +5,7 @@ import Topbar from '../components/Topbar';
 import Header from '../components/Header';
 import FloatingButtons from '../components/FloatingButtons';
 import breadcrumbImg from '../../src/assets/breadcrumb-img.jpg';
+import { Helmet } from 'react-helmet-async';
 
 const handleImageError = (e, fallback) => {
   e.target.onerror = null;
@@ -72,6 +73,13 @@ export default function Blogssinglepage() {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800 antialiased selection:bg-[#50ad77]/20 selection:text-[#50ad77] overflow-x-hidden">
+      {blog && (
+        <Helmet>
+          {blog.meta_title ? <title>{blog.meta_title}</title> : null}
+          {blog.meta_description ? <meta name="description" content={blog.meta_description} /> : null}
+          {blog.meta_keywords ? <meta name="keywords" content={blog.meta_keywords} /> : null}
+        </Helmet>
+      )}
       <Topbar />
       <Header />
       <div className="relative h-48 sm:h-56 md:h-64 lg:h-72 w-full bg-slate-900 overflow-hidden">

@@ -5,6 +5,7 @@ import Topbar from '../components/Topbar';
 import Header from '../components/Header';
 import breadcrumbImg from '../../src/assets/breadcrumb-img.jpg';
 import FloatingButtons from '../components/FloatingButtons';
+import { Helmet } from 'react-helmet-async';
 
 const handleImageError = (e, fallback) => {
   e.target.onerror = null;
@@ -39,8 +40,17 @@ export default function Blogsandarticles() {
     }
   };
 
+  const firstBlog = blogData[0];
+
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800 antialiased selection:bg-[#50ad77]/20 selection:text-[#50ad77] overflow-x-hidden">
+      {firstBlog && (
+        <Helmet>
+          {firstBlog.meta_title ? <title>{firstBlog.meta_title}</title> : null}
+          {firstBlog.meta_description ? <meta name="description" content={firstBlog.meta_description} /> : null}
+          {firstBlog.meta_keywords ? <meta name="keywords" content={firstBlog.meta_keywords} /> : null}
+        </Helmet>
+      )}
       <Topbar />
       <Header />
       <div className="relative h-48 sm:h-56 md:h-64 lg:h-72 w-full bg-slate-900 overflow-hidden animate-fade-in">

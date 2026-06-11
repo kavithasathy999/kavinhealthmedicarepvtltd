@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
-import { LuUpload, LuTrash2, LuImage, LuPen, LuX, LuChevronLeft, LuChevronRight } from 'react-icons/lu';
+import { LuUpload, LuTrash2, LuImage, LuPen, LuX, LuChevronLeft, LuChevronRight, LuSearch } from 'react-icons/lu';
 
 export default function Brands() {
   const [brands, setBrands] = useState([]);
@@ -9,6 +9,7 @@ export default function Brands() {
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [brandToDelete, setBrandToDelete] = useState(null);
@@ -153,10 +154,17 @@ export default function Brands() {
     }
   };
 
+  const filteredBrands = brands.filter(brand => {
+    const type = brand?.type || "";
+    const imageUrl = brand?.image_url || "";
+    const query = searchQuery.toLowerCase();
+    return type.toLowerCase().includes(query) || imageUrl.toLowerCase().includes(query);
+  });
+
   const indexOfLastImage = currentPage * imagesPerPage;
   const indexOfFirstImage = indexOfLastImage - imagesPerPage;
-  const currentImages = brands.slice(indexOfFirstImage, indexOfLastImage);
-  const totalPages = Math.ceil(brands.length / imagesPerPage);
+  const currentImages = filteredBrands.slice(indexOfFirstImage, indexOfLastImage);
+  const totalPages = Math.ceil(filteredBrands.length / imagesPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -181,31 +189,60 @@ export default function Brands() {
         </button>
       </div>
 
-      <div className="w-full md:w-72 mb-4 md:ml-auto">
-        <label className="block text-sm font-semibold text-slate-700 mb-2 text-center">
-          Select Category
-        </label>
-        <select
-          value={selectedType}
-          onChange={(e) => setSelectedType(e.target.value)}
-          className="w-full px-4 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#50ad77]/20 focus:border-[#50ad77] transition-all shadow-sm text-center"
+      <div className="flex flex-wrap justify-center items-center gap-3 mb-2">
+        <button
+          onClick={() => setSelectedType('Our Esteemed PMc')}
+          className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm active:scale-[0.98] cursor-pointer ${
+            selectedType === 'Our Esteemed PMc'
+              ? 'bg-[#50ad77] text-white shadow-lg shadow-[#50ad77]/20'
+              : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+          }`}
         >
-          <option value="Our Esteemed PMc">Our Esteemed PMCs</option>
-          <option value="Our Esteemed Clients">Our Esteemed Clients</option>
-        </select>
+          Our Esteemed PMCs
+        </button>
+        <button
+          onClick={() => setSelectedType('Our Esteemed Clients')}
+          className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm active:scale-[0.98] cursor-pointer ${
+            selectedType === 'Our Esteemed Clients'
+              ? 'bg-[#50ad77] text-white shadow-lg shadow-[#50ad77]/20'
+              : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+          }`}
+        >
+          Our Esteemed Clients
+        </button>
       </div>
 
       <div className="w-full">
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 min-h-[400px] flex flex-col">
-          <h2 className="text-lg font-bold text-slate-800 mb-6 flex items-center justify-between">
+          <h2 className="text-lg font-bold text-slate-800 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <span>{selectedType} Images</span>
-            <span className="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full">{brands.length} items</span>
+            <div className="flex items-center gap-4 w-full sm:w-auto">
+              <div className="relative w-full sm:w-64">
+                <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Search brands..."
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#50ad77]/20 focus:border-[#50ad77] font-medium"
+                />
+              </div>
+              <span className="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full whitespace-nowrap">{filteredBrands.length} items</span>
+            </div>
           </h2>
 
           {brands.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center h-48 text-slate-400 gap-3">
               <LuImage className="w-10 h-10 opacity-20" />
               <p className="text-sm font-medium">No images uploaded for this category.</p>
+            </div>
+          ) : filteredBrands.length === 0 ? (
+            <div className="flex-1 flex flex-col items-center justify-center h-48 text-slate-400 gap-3">
+              <LuSearch className="w-10 h-10 opacity-20" />
+              <p className="text-sm font-medium">No matching images found.</p>
             </div>
           ) : (
             <>

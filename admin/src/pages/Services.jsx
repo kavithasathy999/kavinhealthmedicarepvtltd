@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { Trash2, Image as ImageIcon, Loader2, Plus, ChevronLeft, ChevronRight, Edit } from 'lucide-react';
+import { Trash2, Image as ImageIcon, Loader2, Plus, ChevronLeft, ChevronRight, Edit, Search } from 'lucide-react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
@@ -26,6 +26,7 @@ export default function Services() {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [serviceToDelete, setServiceToDelete] = useState(null);
     const [failedImages, setFailedImages] = useState({});
+    const [searchQuery, setSearchQuery] = useState("");
     const itemsPerPage = 10;
 
     const fileInputRef = useRef(null);
@@ -168,10 +169,17 @@ export default function Services() {
         }
     };
 
+    const filteredServices = services.filter(service => {
+        const title = service?.title || "";
+        const description = service?.description || "";
+        const query = searchQuery.toLowerCase();
+        return title.toLowerCase().includes(query) || description.toLowerCase().includes(query);
+    });
+
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = services.slice(indexOfFirstItem, indexOfLastItem);
-    const totalPages = Math.ceil(services.length / itemsPerPage);
+    const currentItems = filteredServices.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(filteredServices.length / itemsPerPage);
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     return (
@@ -197,11 +205,26 @@ export default function Services() {
                     </button>
                 </div>
                 <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-                        <h2 className="text-lg font-semibold text-slate-800">Uploaded Services</h2>
-                        <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                            {services.length} Total
-                        </span>
+                    <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="flex items-center justify-between w-full sm:w-auto gap-4">
+                            <h2 className="text-lg font-semibold text-slate-800">Uploaded Services</h2>
+                            <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                                {filteredServices.length} Total
+                            </span>
+                        </div>
+                        <div className="relative w-full sm:w-64">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <input
+                                type="text"
+                                placeholder="Search services..."
+                                value={searchQuery}
+                                onChange={(e) => {
+                                    setSearchQuery(e.target.value);
+                                    setCurrentPage(1);
+                                }}
+                                className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#50ad77]/20 focus:border-[#50ad77] font-medium"
+                            />
+                        </div>
                     </div>
                     <div className="overflow-x-auto">
                         {loading ? (
@@ -211,6 +234,11 @@ export default function Services() {
                         ) : services.length === 0 ? (
                             <div className="text-center py-12 text-slate-500">
                                 No services added yet.
+                            </div>
+                        ) : filteredServices.length === 0 ? (
+                            <div className="text-center py-12 text-slate-500 flex flex-col items-center gap-2">
+                                <Search className="w-8 h-8 opacity-20" />
+                                <span>No matching services found.</span>
                             </div>
                         ) : (
                             <table className="w-full text-sm text-left text-slate-600">

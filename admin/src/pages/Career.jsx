@@ -2,16 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
-const COLOR_PRESETS = [
-    { label: 'Blue → Cyan', from: 'from-blue-500', to: 'to-cyan-400' },
-    { label: 'Green → Teal', from: 'from-emerald-500', to: 'to-teal-400' },
-    { label: 'Purple → Indigo', from: 'from-purple-500', to: 'to-indigo-400' },
-    { label: 'Orange → Amber', from: 'from-orange-500', to: 'to-amber-400' },
-    { label: 'Slate → Gray', from: 'from-slate-600', to: 'to-slate-400' },
-    { label: 'Rose → Pink', from: 'from-rose-500', to: 'to-pink-400' },
-    { label: 'Violet → Purple', from: 'from-violet-500', to: 'to-purple-400' },
-    { label: 'Sky → Blue', from: 'from-sky-500', to: 'to-blue-400' },
-];
+
 
 const EMPTY_FORM = {
     title: '',
@@ -111,9 +102,7 @@ function OpportunityModal({ item, onClose, onSaved }) {
         setErrors((prev) => ({ ...prev, [name]: undefined }));
     };
 
-    const handleColorPreset = (preset) => {
-        setForm((prev) => ({ ...prev, color_from: preset.from, color_to: preset.to }));
-    };
+
 
     const handleSubmit = async () => {
         const e = validate();
@@ -138,9 +127,7 @@ function OpportunityModal({ item, onClose, onSaved }) {
         }
     };
 
-    const selectedPreset = COLOR_PRESETS.find(
-        (p) => p.from === form.color_from && p.to === form.color_to
-    );
+
 
     return (
         <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
@@ -185,24 +172,7 @@ function OpportunityModal({ item, onClose, onSaved }) {
                         />
                         {errors.description && <p className="text-xs text-red-500 mt-1">{errors.description}</p>}
                     </div>
-                    <div>
-                        <label className="block text-sm font-semibold text-slate-700 mb-2">Accent Color</label>
-                        <div className="flex flex-wrap gap-2">
-                            {COLOR_PRESETS.map((preset) => (
-                                <button
-                                    key={preset.label}
-                                    type="button"
-                                    onClick={() => handleColorPreset(preset)}
-                                    title={preset.label}
-                                    className={`h-7 w-16 rounded-lg bg-gradient-to-r ${preset.from} ${preset.to} transition-all ${selectedPreset?.label === preset.label
-                                        ? 'ring-2 ring-offset-2 ring-slate-400 scale-105'
-                                        : 'opacity-70 hover:opacity-100'
-                                        }`}
-                                />
-                            ))}
-                        </div>
-                        <p className="text-xs text-slate-400 mt-1.5">Selected: {selectedPreset?.label || 'Custom'}</p>
-                    </div>
+
                     <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-1.5">Meta Title</label>
                         <input
@@ -237,38 +207,17 @@ function OpportunityModal({ item, onClose, onSaved }) {
                             className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#50ad77]/40 transition"
                         />
                     </div>
-                    <div className="flex flex-col sm:flex-row gap-4">
-                        <div className="flex-1">
-                            <label className="block text-sm font-semibold text-slate-700 mb-1.5">Display Order</label>
-                            <input
-                                type="number"
-                                name="display_order"
-                                value={form.display_order}
-                                onChange={handleChange}
-                                min={0}
-                                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#50ad77]/40"
-                            />
-                            <p className="text-xs text-slate-400 mt-1">Lower numbers appear first</p>
-                        </div>
-                        <div className="flex-1 flex flex-col justify-center">
-                            <label className="block text-sm font-semibold text-slate-700 mb-1.5">Visibility</label>
-                            <label className="flex items-center gap-3 cursor-pointer group">
-                                <div className="relative">
-                                    <input
-                                        type="checkbox"
-                                        name="is_active"
-                                        checked={form.is_active === 1}
-                                        onChange={handleChange}
-                                        className="sr-only"
-                                    />
-                                    <div className={`w-11 h-6 rounded-full transition-colors ${form.is_active ? 'bg-[#50ad77]' : 'bg-slate-200'}`} />
-                                    <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${form.is_active ? 'translate-x-5' : ''}`} />
-                                </div>
-                                <span className="text-sm text-slate-600 group-hover:text-slate-800">
-                                    {form.is_active ? 'Active (visible on site)' : 'Inactive (hidden)'}
-                                </span>
-                            </label>
-                        </div>
+                    <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1.5">Display Order</label>
+                        <input
+                            type="number"
+                            name="display_order"
+                            value={form.display_order}
+                            onChange={handleChange}
+                            min={0}
+                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#50ad77]/40"
+                        />
+                        <p className="text-xs text-slate-400 mt-1">Lower numbers appear first</p>
                     </div>
 
                     {errors.submit && (
@@ -304,7 +253,7 @@ function OpportunityModal({ item, onClose, onSaved }) {
     );
 }
 
-function OpportunityRow({ item, index, onEdit, onDelete, onToggle }) {
+function OpportunityRow({ item, index, onEdit, onDelete }) {
     return (
         <tr className="hover:bg-slate-50 border-b border-slate-100 transition-colors">
             <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
@@ -317,22 +266,8 @@ function OpportunityRow({ item, index, onEdit, onDelete, onToggle }) {
             <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
                 {item.display_order}
             </td>
-            <td className="px-6 py-4 whitespace-nowrap">
-                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${item.is_active ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-800'}`}>
-                    {item.is_active ? 'Active' : 'Inactive'}
-                </span>
-            </td>
             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <div className="flex items-center justify-end gap-2">
-                    <button
-                        onClick={() => onToggle(item)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${item.is_active
-                            ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                            : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-                            }`}
-                    >
-                        {item.is_active ? 'Inactivate' : 'Activate'}
-                    </button>
                     <button
                         onClick={() => onEdit(item)}
                         className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
@@ -405,29 +340,10 @@ export default function Career() {
         }
     };
 
-    const handleToggleActive = async (item) => {
-        try {
-            const res = await fetch(`${API_BASE}/api/career/${item.id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...item, is_active: item.is_active ? 0 : 1 })
-            });
-            const json = await res.json();
-            if (!json.success) throw new Error(json.message);
-            fetchOpportunities();
-            setToast({ message: `Opportunity ${item.is_active ? 'deactivated' : 'activated'}`, type: 'success' });
-        } catch (err) {
-            setToast({ message: err.message || 'Failed to toggle status', type: 'error' });
-        }
-    };
-
     const filtered = opportunities.filter(o => 
         o.title.toLowerCase().includes(search.toLowerCase()) || 
         o.description.toLowerCase().includes(search.toLowerCase())
     );
-
-    const activeCount = opportunities.filter(o => o.is_active === 1).length;
-    const inactiveCount = opportunities.length - activeCount;
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -464,17 +380,9 @@ export default function Career() {
             </div>
 
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-                <div className="grid grid-cols-3 gap-3 sm:gap-4">
-                    {[
-                        { label: 'Total', value: opportunities.length, color: 'text-slate-700', bg: 'bg-slate-100' },
-                        { label: 'Active', value: activeCount, color: 'text-emerald-700', bg: 'bg-emerald-50' },
-                        { label: 'Inactive', value: inactiveCount, color: 'text-slate-500', bg: 'bg-slate-50' },
-                    ].map((s) => (
-                        <div key={s.label} className={`${s.bg} rounded-2xl p-4 sm:p-5`}>
-                            <p className={`text-2xl sm:text-3xl font-extrabold ${s.color}`}>{s.value}</p>
-                            <p className="text-xs sm:text-sm text-slate-500 mt-0.5">{s.label}</p>
-                        </div>
-                    ))}
+                <div className="bg-slate-100 rounded-2xl p-4 sm:p-5 w-fit min-w-[155px] text-center">
+                    <p className="text-2xl sm:text-3xl font-extrabold text-slate-700">{opportunities.length}</p>
+                    <p className="text-xs sm:text-sm text-slate-500 mt-0.5">Total Opportunities</p>
                 </div>
                 <div className="relative">
                     <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -524,7 +432,6 @@ export default function Career() {
                                         <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">S.No</th>
                                         <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Title & Description</th>
                                         <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Order</th>
-                                        <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
                                         <th scope="col" className="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
@@ -536,7 +443,6 @@ export default function Career() {
                                             index={indexOfFirstItem + index}
                                             onEdit={setModalItem}
                                             onDelete={setDeleteTarget}
-                                            onToggle={handleToggleActive}
                                         />
                                     ))}
                                 </tbody>

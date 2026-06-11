@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
-import { LuUpload, LuTrash2, LuImage, LuPen, LuX } from 'react-icons/lu';
+import { LuUpload, LuTrash2, LuImage, LuPen, LuX, LuSearch } from 'react-icons/lu';
 
 export default function Blogs() {
   const [blogs, setBlogs] = useState([]);
@@ -22,6 +22,7 @@ export default function Blogs() {
   const [editPreview, setEditPreview] = useState(null);
   const [blogToDelete, setBlogToDelete] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
   const blogsPerPage = 8;
 
   const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
@@ -215,8 +216,20 @@ export default function Blogs() {
     }
   };
 
-  const totalPages = Math.ceil(blogs.length / blogsPerPage);
-  const paginatedBlogs = blogs.slice((currentPage - 1) * blogsPerPage, currentPage * blogsPerPage);
+  const filteredBlogs = blogs.filter((blog) => {
+    const titleText = blog.title || '';
+    const descriptionText = blog.description || '';
+    const readTimeText = blog.read_time || '';
+    const query = searchQuery.toLowerCase();
+    return (
+      titleText.toLowerCase().includes(query) ||
+      descriptionText.toLowerCase().includes(query) ||
+      readTimeText.toLowerCase().includes(query)
+    );
+  });
+
+  const totalPages = Math.ceil(filteredBlogs.length / blogsPerPage);
+  const paginatedBlogs = filteredBlogs.slice((currentPage - 1) * blogsPerPage, currentPage * blogsPerPage);
 
   return (
     <>
@@ -243,15 +256,37 @@ export default function Blogs() {
 
         <div className="w-full">
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col">
-            <h2 className="text-lg font-bold text-slate-800 mb-6 flex items-center justify-between">
-              <span>Published Blogs</span>
-              <span className="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full">{blogs.length} items</span>
-            </h2>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100">
+              <div className="flex items-center justify-between w-full sm:w-auto gap-4">
+                <h2 className="text-lg font-bold text-slate-800">Published Blogs</h2>
+                <span className="bg-[#50ad77]/10 text-[#50ad77] text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                  {filteredBlogs.length} items
+                </span>
+              </div>
+              <div className="relative w-full sm:w-64">
+                <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Search blogs..."
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#50ad77]/20 focus:border-[#50ad77] font-medium"
+                />
+              </div>
+            </div>
 
             {blogs.length === 0 ? (
               <div className="flex-1 flex flex-col items-center justify-center h-48 text-slate-400 gap-3">
                 <LuImage className="w-10 h-10 opacity-20" />
                 <p className="text-sm font-medium">No blogs published yet.</p>
+              </div>
+            ) : filteredBlogs.length === 0 ? (
+              <div className="flex-1 flex flex-col items-center justify-center h-48 text-slate-400 gap-3">
+                <LuSearch className="w-10 h-10 opacity-20 text-[#50ad77]" />
+                <p className="text-sm font-medium">No matching blogs found.</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -310,7 +345,7 @@ export default function Blogs() {
                 {totalPages > 1 && (
                   <div className="flex items-center justify-between px-4 py-4 border-t border-slate-100 mt-2">
                     <p className="text-xs text-slate-500">
-                      Showing {(currentPage - 1) * blogsPerPage + 1}–{Math.min(currentPage * blogsPerPage, blogs.length)} of {blogs.length} blogs
+                      Showing {(currentPage - 1) * blogsPerPage + 1}–{Math.min(currentPage * blogsPerPage, filteredBlogs.length)} of {filteredBlogs.length} blogs
                     </p>
                     <div className="flex items-center gap-1">
                       <button

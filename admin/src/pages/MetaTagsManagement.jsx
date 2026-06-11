@@ -20,6 +20,7 @@ export default function MetaTagsManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedTag, setSelectedTag] = useState(null);
+  const [services, setServices] = useState([]);
   
   const [formData, setFormData] = useState({
     page_route: '',
@@ -32,8 +33,11 @@ export default function MetaTagsManagement() {
   const itemsPerPage = 10;
   const [searchQuery, setSearchQuery] = useState('');
 
+  const createSlug = (text) => text.toLowerCase().replace(/[^a-z0-9]/g, "");
+
   useEffect(() => {
     fetchMetaTags();
+    fetchServices();
   }, []);
 
   const fetchMetaTags = async () => {
@@ -51,6 +55,52 @@ export default function MetaTagsManagement() {
       setLoading(false);
     }
   };
+
+  const fetchServices = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/services`);
+      const json = await res.json();
+      if (json.success) {
+        setServices(json.services || []);
+      }
+    } catch (err) {
+      console.error("Error fetching services:", err);
+    }
+  };
+
+  // Sync form inputs when page_route changes inside the modal
+  useEffect(() => {
+    if (!isModalOpen) return;
+    if (!formData.page_route) {
+      setSelectedTag(null);
+      setFormData(prev => ({
+        ...prev,
+        meta_title: '',
+        meta_description: '',
+        meta_keywords: ''
+      }));
+      return;
+    }
+
+    const existing = metaTags.find(tag => tag.page_route === formData.page_route);
+    if (existing) {
+      setSelectedTag(existing);
+      setFormData(prev => ({
+        ...prev,
+        meta_title: existing.meta_title || '',
+        meta_description: existing.meta_description || '',
+        meta_keywords: existing.meta_keywords || ''
+      }));
+    } else {
+      setSelectedTag(null);
+      setFormData(prev => ({
+        ...prev,
+        meta_title: '',
+        meta_description: '',
+        meta_keywords: ''
+      }));
+    }
+  }, [formData.page_route, isModalOpen, metaTags]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -129,12 +179,19 @@ export default function MetaTagsManagement() {
     }
   };
 
+  const mainRoute = formData.page_route.startsWith('/services') ? '/services' : formData.page_route;
+  const serviceRoute = formData.page_route.startsWith('/services') ? formData.page_route : '';
+
   const filteredTags = metaTags.filter(tag => {
     const route = tag?.page_route || '';
     const title = tag?.meta_title || '';
+    const description = tag?.meta_description || '';
+    const keywords = tag?.meta_keywords || '';
     const query = searchQuery || '';
     return route.toLowerCase().includes(query.toLowerCase()) ||
-           title.toLowerCase().includes(query.toLowerCase());
+           title.toLowerCase().includes(query.toLowerCase()) ||
+           description.toLowerCase().includes(query.toLowerCase()) ||
+           keywords.toLowerCase().includes(query.toLowerCase());
   });
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -167,9 +224,12 @@ export default function MetaTagsManagement() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Search by route or title..."
+              placeholder="Search by route, title, description or keywords..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
               className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#50ad77]/20 focus:border-[#50ad77]"
             />
           </div>
@@ -192,7 +252,8 @@ export default function MetaTagsManagement() {
                 <tr className="bg-slate-50 border-y border-slate-100">
                   <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Route</th>
                   <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Meta Title</th>
-                  <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Description</th>
+                  <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Meta Description</th>
+                  <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Meta Keywords</th>
                   <th className="py-3 px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Actions</th>
                 </tr>
               </thead>
@@ -209,6 +270,9 @@ export default function MetaTagsManagement() {
                     </td>
                     <td className="py-3 px-4 text-sm text-slate-500 truncate max-w-[300px]" title={tag.meta_description}>
                       {tag.meta_description}
+                    </td>
+                    <td className="py-3 px-4 text-sm text-slate-500 truncate max-w-[200px]" title={tag.meta_keywords}>
+                      {tag.meta_keywords || '—'}
                     </td>
                     <td className="py-3 px-4 text-right">
                       <div className="flex justify-end gap-2">
@@ -277,8 +341,15 @@ export default function MetaTagsManagement() {
                 <select
                   name="page_route"
                   required
-                  value={formData.page_route}
-                  onChange={handleInputChange}
+                  value={mainRoute}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === '/services') {
+                      setFormData(prev => ({ ...prev, page_route: '/services' }));
+                    } else {
+                      setFormData(prev => ({ ...prev, page_route: val }));
+                    }
+                  }}
                   className="w-full px-4 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-[#50ad77] bg-white"
                 >
                   <option value="" disabled>Select a page route</option>
@@ -289,6 +360,31 @@ export default function MetaTagsManagement() {
                   ))}
                 </select>
               </div>
+              {mainRoute === '/services' && (
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Select Service *</label>
+                  <select
+                    value={serviceRoute || '/services'}
+                    required
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setFormData(prev => ({ ...prev, page_route: val }));
+                    }}
+                    className="w-full px-4 py-2 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-[#50ad77] bg-white"
+                  >
+                    <option value="/services">All Services Page</option>
+                    {services.map((service) => {
+                      const slug = createSlug(service.title);
+                      const routeVal = `/services/${slug}`;
+                      return (
+                        <option key={service.id} value={routeVal}>
+                          {service.title}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1">Meta Title *</label>
                 <input

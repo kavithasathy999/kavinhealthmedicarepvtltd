@@ -5,6 +5,7 @@ import Topbar from '../components/Topbar';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import breadcrumbImg from '../../src/assets/breadcrumb-img.jpg';
+import { Helmet } from 'react-helmet-async';
 
 const styleSheet = document.createElement("style");
 styleSheet.innerText = `
@@ -98,7 +99,12 @@ export default function ResourceRepository() {
                     clearInterval(interval);
                     setTimeout(() => {
                         setDownloadingId(null);
-                        window.open(`${API_BASE}/uploads/${report.pdf_url}`, '_blank');
+                        const link = document.createElement('a');
+                        link.href = `${API_BASE}/api/resource-repository/download/${report.pdf_url}`;
+                        link.setAttribute('download', report.pdf_url.split('/').pop() || 'report.pdf');
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
                     }, 300);
                     return 100;
                 }
@@ -107,8 +113,17 @@ export default function ResourceRepository() {
         }, 150);
     };
 
+    const firstReport = reports[0];
+
     return (
         <div className="min-h-screen font-sans text-slate-800 flex flex-col bg-slate-50">
+            {firstReport && (
+                <Helmet>
+                    {firstReport.meta_title ? <title>{firstReport.meta_title}</title> : null}
+                    {firstReport.meta_description ? <meta name="description" content={firstReport.meta_description} /> : null}
+                    {firstReport.meta_keywords ? <meta name="keywords" content={firstReport.meta_keywords} /> : null}
+                </Helmet>
+            )}
             <Topbar />
             <Header />
             <div className="relative h-48 sm:h-56 md:h-64 lg:h-72 w-full bg-slate-900 overflow-hidden animate-fade-in">

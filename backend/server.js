@@ -22,6 +22,8 @@ const allowedOrigins = [
   "http://dashboardkavin.saitechnosolutions.co.in",
   "https://kavinhealthcare.saitechnosolutions.co.in",
   "http://kavinhealthcare.saitechnosolutions.co.in",
+  "http://172.16.0.23:5173",
+  "http://172.16.0.23:5174",
   "http://localhost:5173",
   "http://localhost:5174",
 ];

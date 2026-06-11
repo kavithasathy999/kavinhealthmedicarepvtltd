@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { Trash2, FileText, Loader2, Plus, Edit, Eye, X } from 'lucide-react';
+import { Trash2, FileText, Loader2, Plus, Edit, Eye, X, Search } from 'lucide-react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import DeleteConfirmModal from '../components/DeleteConfirmModal';
@@ -17,6 +17,7 @@ export default function ResourceRepository() {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [reportToDelete, setReportToDelete] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
+    const [searchQuery, setSearchQuery] = useState("");
     const [selectedReport, setSelectedReport] = useState(null);
     const itemsPerPage = 10;
     const selectedPdfUrl = selectedReport
@@ -156,6 +157,13 @@ export default function ResourceRepository() {
         }
     };
 
+    const filteredReports = reports.filter(report => {
+        const headline = report?.headline || "";
+        const fileSize = report?.file_size || "";
+        const query = searchQuery.toLowerCase();
+        return headline.toLowerCase().includes(query) || fileSize.toLowerCase().includes(query);
+    });
+
     return (
         <div className="p-6 md:p-8 bg-slate-50 min-h-screen">
             <ToastContainer position="top-right" autoClose={1500} />
@@ -183,6 +191,27 @@ export default function ResourceRepository() {
                     </div>
                 ) : (
                     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div className="flex items-center justify-between w-full sm:w-auto gap-4">
+                                <h2 className="text-lg font-semibold text-slate-800">Uploaded Reports</h2>
+                                <span className="bg-[#50ad77]/10 text-[#50ad77] text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                                    {filteredReports.length} Total
+                                </span>
+                            </div>
+                            <div className="relative w-full sm:w-64">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <input
+                                    type="text"
+                                    placeholder="Search reports..."
+                                    value={searchQuery}
+                                    onChange={(e) => {
+                                        setSearchQuery(e.target.value);
+                                        setCurrentPage(1);
+                                    }}
+                                    className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#50ad77]/20 focus:border-[#50ad77] font-medium"
+                                />
+                            </div>
+                        </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
                                 <thead>
@@ -198,8 +227,17 @@ export default function ResourceRepository() {
                                         <tr>
                                             <td colSpan="4" className="text-center py-8 text-slate-500">No reports found</td>
                                         </tr>
+                                    ) : filteredReports.length === 0 ? (
+                                        <tr>
+                                            <td colSpan="4" className="text-center py-8 text-slate-500">
+                                                <div className="flex flex-col items-center gap-2 justify-center">
+                                                    <Search className="w-8 h-8 opacity-20 text-slate-450" />
+                                                    <span>No matching reports found.</span>
+                                                </div>
+                                            </td>
+                                        </tr>
                                     ) : (
-                                        reports.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(report => (
+                                        filteredReports.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(report => (
                                             <tr key={report.id} className="hover:bg-slate-50/50 transition-colors">
                                                 <td className="py-4 px-6 text-slate-500 font-medium">{report.id}.</td>
                                                 <td className="py-4 px-6">
@@ -245,10 +283,10 @@ export default function ResourceRepository() {
                                 </tbody>
                             </table>
                         </div>
-                        {reports.length > itemsPerPage && (
+                        {filteredReports.length > itemsPerPage && (
                             <div className="flex justify-between items-center p-4 border-t border-slate-200">
                                 <span className="text-sm text-slate-500">
-                                    Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, reports.length)} of {reports.length} entries
+                                    Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredReports.length)} of {filteredReports.length} entries
                                 </span>
                                 <div className="flex gap-2">
                                     <button
@@ -259,8 +297,8 @@ export default function ResourceRepository() {
                                         Previous
                                     </button>
                                     <button
-                                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(reports.length / itemsPerPage)))}
-                                        disabled={currentPage === Math.ceil(reports.length / itemsPerPage)}
+                                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(filteredReports.length / itemsPerPage)))}
+                                        disabled={currentPage === Math.ceil(filteredReports.length / itemsPerPage)}
                                         className="px-3 py-1 border border-slate-300 rounded hover:bg-slate-50 disabled:opacity-50"
                                     >
                                         Next

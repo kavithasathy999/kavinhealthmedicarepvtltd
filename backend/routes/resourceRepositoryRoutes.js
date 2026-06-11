@@ -33,6 +33,7 @@ const upload = multer({
 });
 
 router.get("/", resourceRepositoryController.getResourceRepository);
+router.get("/download/:filename", resourceRepositoryController.downloadResourceReport);
 router.post("/", upload.single("pdf"), resourceRepositoryController.addResourceRepository);
 router.put("/:id", upload.single("pdf"), resourceRepositoryController.updateResourceRepository);
 router.delete("/:id", resourceRepositoryController.deleteResourceRepository);

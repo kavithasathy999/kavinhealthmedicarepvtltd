@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { Star, Plus, X, AlertCircle, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { Star, Plus, X, AlertCircle, CheckCircle, ChevronLeft, ChevronRight, Search } from "lucide-react";
 
 const API_URL = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/testimonials`;
 const BRAND_COLOR = "#50ad77";
@@ -278,6 +278,7 @@ const Testimonials = () => {
   const [toast, setToast] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
   const itemsPerPage = 10;
 
   const showToast = (message, type = "success") =>
@@ -322,10 +323,22 @@ const Testimonials = () => {
     }
   };
 
+  const filteredTestimonials = testimonials.filter((item) => {
+    const nameText = item.name || '';
+    const designationText = item.designation || '';
+    const descriptionText = item.description || '';
+    const query = searchQuery.toLowerCase();
+    return (
+      nameText.toLowerCase().includes(query) ||
+      designationText.toLowerCase().includes(query) ||
+      descriptionText.toLowerCase().includes(query)
+    );
+  });
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = testimonials.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(testimonials.length / itemsPerPage);
+  const currentItems = filteredTestimonials.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredTestimonials.length / itemsPerPage);
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
@@ -377,6 +390,27 @@ const Testimonials = () => {
           </button>
         </div>
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center justify-between w-full sm:w-auto gap-4">
+              <h2 className="text-lg font-bold text-slate-800">Uploaded Testimonials</h2>
+              <span className="bg-[#50ad77]/10 text-[#50ad77] text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                {filteredTestimonials.length} Total
+              </span>
+            </div>
+            <div className="relative w-full sm:w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search testimonials..."
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#50ad77]/20 focus:border-[#50ad77] font-medium"
+              />
+            </div>
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
@@ -435,6 +469,15 @@ const Testimonials = () => {
                           <Plus className="w-4 h-4" />
                           Add First Testimonial
                         </button>
+                      </div>
+                    </td>
+                  </tr>
+                ) : filteredTestimonials.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="py-16 text-center">
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <Search className="w-8 h-8 opacity-20 text-[#50ad77]" />
+                        <span className="text-sm font-medium text-slate-500">No matching testimonials found.</span>
                       </div>
                     </td>
                   </tr>

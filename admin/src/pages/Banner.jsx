@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import DeleteConfirmModal from "../components/DeleteConfirmModal";
-import { ChevronLeft, ChevronRight, Image as ImageIcon } from "lucide-react";
+import { ChevronLeft, ChevronRight, Image as ImageIcon, Search } from "lucide-react";
 
 const MAX_BANNER_IMAGE_SIZE = 3 * 1024 * 1024;
 const BANNER_WORD_LIMITS = {
@@ -19,6 +19,7 @@ const getWordLimitError = (label, value, limit) =>
 export default function Banner() {
   const [slides, setSlides] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
   const itemsPerPage = 10;
 
   const [activeTab, setActiveTab] = useState(0);
@@ -262,10 +263,20 @@ export default function Banner() {
     setFailedImages((prev) => ({ ...prev, [key]: true }));
   };
 
+  const filteredSlides = slides.filter(slide => {
+    const tag = slide?.tag || "";
+    const title = slide?.title || "";
+    const description = slide?.description || "";
+    const query = searchQuery.toLowerCase();
+    return tag.toLowerCase().includes(query) ||
+           title.toLowerCase().includes(query) ||
+           description.toLowerCase().includes(query);
+  });
+
   const indexOfLastSlide = currentPage * itemsPerPage;
   const indexOfFirstSlide = indexOfLastSlide - itemsPerPage;
-  const currentSlides = slides.slice(indexOfFirstSlide, indexOfLastSlide);
-  const totalPages = Math.ceil(slides.length / itemsPerPage);
+  const currentSlides = filteredSlides.slice(indexOfFirstSlide, indexOfLastSlide);
+  const totalPages = Math.ceil(filteredSlides.length / itemsPerPage);
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
@@ -286,8 +297,21 @@ export default function Banner() {
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50">
+        <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <h3 className="text-lg font-bold text-slate-700">Current Active Live Banners Workspace</h3>
+          <div className="relative w-full sm:w-72">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Search banners..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#50ad77]/20 focus:border-[#50ad77] font-medium"
+            />
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse whitespace-nowrap">

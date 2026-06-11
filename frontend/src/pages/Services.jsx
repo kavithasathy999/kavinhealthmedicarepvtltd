@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
+import { Helmet } from 'react-helmet-async';
 import breadcrumbImg from '../../src/assets/breadcrumb-img.jpg';
 import Footer from '../components/Footer';
 import FloatingButtons from '../components/FloatingButtons';
@@ -34,6 +35,7 @@ const Services = () => {
   const [servicesData, setServicesData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedServiceId, setSelectedServiceId] = useState(null);
+  const [customSeo, setCustomSeo] = useState(null);
 
   const createSlug = (text) => text.toLowerCase().replace(/[^a-z0-9]/g, "");
 
@@ -66,12 +68,41 @@ const Services = () => {
     }
   }, [slug, servicesData]);
 
+  // Fetch route-specific meta tags from page_meta_tags
+  useEffect(() => {
+    const fetchCustomSeo = async () => {
+      try {
+        const route = slug ? `/services/${slug}` : '/services';
+        const res = await axios.get(`${API_BASE}/api/meta-tags/current?route=${encodeURIComponent(route)}`);
+        if (res.data.success && res.data.data) {
+          setCustomSeo(res.data.data);
+        } else {
+          setCustomSeo(null);
+        }
+      } catch (err) {
+        console.error("Error fetching custom SEO:", err);
+      }
+    };
+    fetchCustomSeo();
+  }, [slug]);
+
   const filteredServices = selectedServiceId
     ? servicesData.filter(s => String(s.id) === String(selectedServiceId))
     : [];
 
+  const selectedService = filteredServices[0];
+
   return (
     <div className="min-h-screen bg-[#f8fafc] font-sans text-slate-800 overflow-x-hidden">
+      <Helmet>
+        <title>{customSeo?.meta_title || selectedService?.meta_title || 'Services'}</title>
+        {(customSeo?.meta_description || selectedService?.meta_description) && (
+          <meta name="description" content={customSeo?.meta_description || selectedService?.meta_description} />
+        )}
+        {(customSeo?.meta_keywords || selectedService?.meta_keywords) && (
+          <meta name="keywords" content={customSeo?.meta_keywords || selectedService?.meta_keywords} />
+        )}
+      </Helmet>
       <Topbar />
       <Header />
       <div className="relative h-40 sm:h-56 md:h-64 lg:h-72 w-full bg-slate-900 overflow-hidden animate-fade-in">

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { Plus, X, AlertCircle, CheckCircle, BarChart2, Hash, Type, ArrowUpDown } from "lucide-react";
+import { Plus, X, AlertCircle, CheckCircle, BarChart2, Hash, Type, ArrowUpDown, Eye, Search } from "lucide-react";
 
 const API_URL = `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5000"}/api/stats`;
 const BRAND_COLOR = "#50ad77";
@@ -56,13 +56,97 @@ const ConfirmModal = ({ label, onConfirm, onCancel }) => (
     </div>
 );
 
+const ViewStatModal = ({ item, onClose }) => {
+    if (!item) return null;
+
+    const handleBackdrop = (e) => {
+        if (e.target === e.currentTarget) onClose();
+    };
+
+    return (
+        <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6"
+            onClick={handleBackdrop}
+        >
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all animate-in fade-in zoom-in-95 duration-200">
+                {/* Header */}
+                <div
+                    className="flex items-center justify-between px-6 py-4"
+                    style={{ backgroundColor: BRAND_COLOR }}
+                >
+                    <h2 className="text-white font-bold text-lg flex items-center gap-2">
+                        <Eye className="w-5 h-5" /> Stat Details
+                    </h2>
+                    <button
+                        onClick={onClose}
+                        className="text-white/80 hover:text-white transition rounded-full p-1 hover:bg-white/20"
+                    >
+                        <X className="w-5 h-5" />
+                    </button>
+                </div>
+
+                {/* Content */}
+                <div className="px-6 py-6 space-y-6">
+                    {/* Visual Card Preview */}
+                    <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 shadow-inner flex flex-col items-center justify-center">
+                        <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Live Preview</span>
+                        <div className="text-4xl font-extrabold text-slate-900 tracking-tight">
+                            {item.value}{item.suffix || ""}
+                        </div>
+                        <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1.5 text-center">
+                            {item.label}
+                        </p>
+                    </div>
+
+                    {/* Metadata Grid */}
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
+                            <span className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Value</span>
+                            <span className="font-extrabold text-slate-800 text-base">{item.value}</span>
+                        </div>
+                        <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
+                            <span className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Suffix</span>
+                            <span className="font-semibold text-slate-700 text-base">
+                                {item.suffix || <span className="text-slate-300 italic font-normal text-sm">None</span>}
+                            </span>
+                        </div>
+                        <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100 col-span-2">
+                            <span className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Label</span>
+                            <span className="font-semibold text-slate-700 text-base">{item.label}</span>
+                        </div>
+                        <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
+                            <span className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Display Order</span>
+                            <span className="font-bold text-slate-700 text-base">
+                                {item.display_order !== null && item.display_order !== undefined ? item.display_order : <span className="text-slate-300 italic font-normal text-sm">None</span>}
+                            </span>
+                        </div>
+                        <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100">
+                            <span className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Stat ID</span>
+                            <span className="font-mono text-xs text-slate-500 truncate" title={item.id}>{item.id}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Footer */}
+                <div className="px-6 pb-6 pt-2 flex justify-end">
+                    <button
+                        onClick={onClose}
+                        className="w-full sm:w-auto px-6 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition shadow-sm"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const StatModal = ({ editData, onClose, onSaved }) => {
     const isEdit = !!editData;
 
     const [form, setForm] = useState({
-        value: editData?.value || "",
+        valueAndSuffix: `${editData?.value ?? ""}${editData?.suffix ?? ""}`,
         label: editData?.label || "",
-        suffix: editData?.suffix || "",
         display_order: editData?.display_order || "",
     });
     const [errors, setErrors] = useState({});
@@ -70,9 +154,15 @@ const StatModal = ({ editData, onClose, onSaved }) => {
 
     const validate = () => {
         const e = {};
-        if (form.value === "" || form.value === null) e.value = "Value is required.";
-        else if (isNaN(Number(form.value)) || Number(form.value) < 0)
-            e.value = "Value must be a positive number.";
+        const valAndSuf = form.valueAndSuffix.trim();
+        if (!valAndSuf) {
+            e.valueAndSuffix = "Value is required.";
+        } else {
+            const match = valAndSuf.match(/^(\d+)(.*)$/);
+            if (!match) {
+                e.valueAndSuffix = "Must start with a positive number (e.g. 100+).";
+            }
+        }
         if (!form.label.trim()) {
             e.label = "Label is required.";
         } else if (form.label.trim().length < 2) {
@@ -92,8 +182,18 @@ const StatModal = ({ editData, onClose, onSaved }) => {
         const e = validate();
         if (Object.keys(e).length > 0) return setErrors(e);
         setLoading(true);
+
+        const match = form.valueAndSuffix.trim().match(/^(\d+)(.*)$/);
+        const parsedValue = Number(match[1]);
+        const parsedSuffix = match[2].trim();
+
         try {
-            await axios.put(`${API_URL}/${editData.id}`, form);
+            await axios.put(`${API_URL}/${editData.id}`, {
+                value: parsedValue,
+                suffix: parsedSuffix,
+                label: form.label,
+                display_order: form.display_order
+            });
             onSaved("Stat updated successfully!");
         } catch (err) {
             setErrors({ api: err.response?.data?.message || "Something went wrong." });
@@ -136,45 +236,22 @@ const StatModal = ({ editData, onClose, onSaved }) => {
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-1.5">
                             <span className="flex items-center gap-1.5">
-                                <Hash className="w-3.5 h-3.5" /> Value <span className="text-red-500">*</span>
-                            </span>
-                        </label>
-                        <input
-                            type="number"
-                            min="0"
-                            value={form.value}
-                            onChange={(e) => handleChange("value", e.target.value)}
-                            onKeyDown={(e) => {
-                                if (['e', 'E', '+', '-', '.'].includes(e.key)) e.preventDefault();
-                            }}
-                            placeholder="e.g. 100"
-                            className={`w-full border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 transition ${errors.value
-                                ? "border-red-400 focus:ring-red-200"
-                                : "border-gray-200 focus:ring-[#50ad77]/30 focus:border-[#50ad77]"
-                                }`}
-                        />
-                        {errors.value && (
-                            <p className="text-red-500 text-xs mt-1">{errors.value}</p>
-                        )}
-                    </div>
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                            <span className="flex items-center gap-1.5">
-                                <Type className="w-3.5 h-3.5" /> Suffix
-                                <span className="text-gray-400 font-normal">(optional — e.g. +, %, /7)</span>
+                                <Hash className="w-3.5 h-3.5" /> Value & Suffix <span className="text-red-500">*</span>
                             </span>
                         </label>
                         <input
                             type="text"
-                            value={form.suffix}
-                            onChange={(e) => {
-                                const val = e.target.value;
-                                if (/^[^a-zA-Z]*$/.test(val)) handleChange("suffix", val);
-                            }}
-                            placeholder="e.g.  +  or  %  or  /7"
-                            maxLength={10}
-                            className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#50ad77]/30 focus:border-[#50ad77] transition"
+                            value={form.valueAndSuffix}
+                            onChange={(e) => handleChange("valueAndSuffix", e.target.value)}
+                            placeholder="e.g. 100+ or 99% or /7"
+                            className={`w-full border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 transition ${errors.valueAndSuffix
+                                ? "border-red-400 focus:ring-red-200"
+                                : "border-gray-200 focus:ring-[#50ad77]/30 focus:border-[#50ad77]"
+                                }`}
                         />
+                        {errors.valueAndSuffix && (
+                            <p className="text-red-500 text-xs mt-1">{errors.valueAndSuffix}</p>
+                        )}
                     </div>
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-1.5">
@@ -219,14 +296,13 @@ const StatModal = ({ editData, onClose, onSaved }) => {
                             placeholder="e.g. 1"
                             className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#50ad77]/30 focus:border-[#50ad77] transition"
                         />
-                        <p className="text-gray-400 text-xs mt-1">Lower number = appears first on homepage.</p>
                     </div>
                 </div>
                 <div className="mx-6 mb-5 p-4 bg-slate-50 rounded-xl border border-slate-100">
                     <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Preview</p>
                     <div className="text-center">
                         <div className="text-3xl font-extrabold text-slate-900 tracking-tight">
-                            {form.value || "0"}{form.suffix || ""}
+                            {form.valueAndSuffix || "0"}
                         </div>
                         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">
                             {form.label || "Label"}
@@ -263,7 +339,9 @@ const Stats = () => {
     const [showModal, setShowModal] = useState(false);
     const [editData, setEditData] = useState(null);
     const [deleteTarget, setDeleteTarget] = useState(null);
+    const [viewTarget, setViewTarget] = useState(null);
     const [toast, setToast] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
 
     const showToast = (message, type = "success") => setToast({ message, type });
 
@@ -306,6 +384,16 @@ const Stats = () => {
         }
     };
 
+    const filteredStats = stats.filter(stat => {
+        const val = String(stat?.value || "");
+        const suf = stat?.suffix || "";
+        const lbl = stat?.label || "";
+        const query = searchQuery.toLowerCase();
+        return val.toLowerCase().includes(query) ||
+               suf.toLowerCase().includes(query) ||
+               lbl.toLowerCase().includes(query);
+    });
+
     return (
         <div className="min-h-screen bg-gray-50">
             {toast && (
@@ -325,72 +413,91 @@ const Stats = () => {
                     onCancel={() => setDeleteTarget(null)}
                 />
             )}
+            {viewTarget && (
+                <ViewStatModal
+                    item={viewTarget}
+                    onClose={() => setViewTarget(null)}
+                />
+            )}
 
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
                 <div className="flex items-center justify-between mb-6 sm:mb-8">
                     <div>
                         <h1 className="text-3xl font-black text-slate-800 tracking-tight">
                             Stats Management
                         </h1>
                         <p className="text-[#50ad77] text-sm mt-0.5">
-                            {stats.length} stat{stats.length !== 1 ? "s" : ""} total
+                            {filteredStats.length} stat{filteredStats.length !== 1 ? "s" : ""} total
                         </p>
                     </div>
                 </div>
 
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="relative w-full sm:w-72">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <input
+                                type="text"
+                                placeholder="Search stats..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#50ad77]/20 focus:border-[#50ad77] font-medium"
+                            />
+                        </div>
+                    </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-slate-50 border-b border-slate-200">
                                     <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-16">S.No</th>
-                                    <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-28">Value</th>
-                                    <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-24">Suffix</th>
+                                    <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-36">Value</th>
                                     <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider">Label</th>
-                                    <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-28">Order</th>
-                                    <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-40">Preview</th>
-                                    <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-32 text-center">Actions</th>
+                                    <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-20">Order</th>
+                                    <th className="py-4 px-6 text-xs font-bold text-slate-500 uppercase tracking-wider w-40 text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {loading ? (
                                     [...Array(4)].map((_, i) => (
                                         <tr key={i} className="animate-pulse">
-                                            {[...Array(7)].map((_, j) => (
+                                            {[...Array(5)].map((_, j) => (
                                                 <td key={j} className="py-4 px-6">
                                                     <div className="h-4 bg-slate-200 rounded w-full" />
                                                 </td>
                                             ))}
                                         </tr>
                                     ))
-                                ) : stats.length === 0 ? (
+                                ) : filteredStats.length === 0 ? (
                                     <tr>
-                                        <td colSpan="7" className="py-16 text-center">
+                                        <td colSpan="5" className="py-16 text-center">
                                             <div className="flex flex-col items-center justify-center">
                                                 <div
                                                     className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
                                                     style={{ backgroundColor: `${BRAND_COLOR}15` }}
                                                 >
-                                                    <BarChart2 className="w-8 h-8" style={{ color: BRAND_COLOR }} />
+                                                    {searchQuery ? (
+                                                        <Search className="w-8 h-8" style={{ color: BRAND_COLOR }} />
+                                                    ) : (
+                                                        <BarChart2 className="w-8 h-8" style={{ color: BRAND_COLOR }} />
+                                                    )}
                                                 </div>
-                                                <h3 className="text-lg font-bold text-slate-800 mb-1">No stats yet</h3>
+                                                <h3 className="text-lg font-bold text-slate-800 mb-1">
+                                                    {searchQuery ? "No matching stats found" : "No stats yet"}
+                                                </h3>
                                                 <p className="text-slate-500 text-sm mb-6">
-                                                    No stats available to display.
+                                                    {searchQuery ? "Try a different keyword." : "No stats available to display."}
                                                 </p>
                                             </div>
                                         </td>
                                     </tr>
                                 ) : (
-                                    stats.map((item, index) => (
+                                    filteredStats.map((item, index) => (
                                         <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
                                             <td className="py-4 px-6 text-sm font-medium text-slate-500">
                                                 {index + 1}.
                                             </td>
                                             <td className="py-4 px-6 text-sm font-extrabold text-slate-800">
-                                                {item.value}
-                                            </td>
-                                            <td className="py-4 px-6 text-sm font-semibold text-slate-600">
-                                                {item.suffix || <span className="text-slate-300 italic">none</span>}
+                                                {item.value}{item.suffix}
                                             </td>
                                             <td className="py-4 px-6 text-sm text-slate-700 font-medium">
                                                 {item.label}
@@ -398,19 +505,14 @@ const Stats = () => {
                                             <td className="py-4 px-6 text-sm text-slate-500">
                                                 {item.display_order}
                                             </td>
-                                            {/* Preview */}
-                                            <td className="py-4 px-6">
-                                                <div className="bg-slate-50 rounded-xl px-3 py-2 text-center border border-slate-100 min-w-[100px]">
-                                                    <div className="text-lg font-extrabold text-slate-900 tracking-tight leading-tight">
-                                                        {item.value}{item.suffix}
-                                                    </div>
-                                                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-tight mt-0.5 line-clamp-2">
-                                                        {item.label}
-                                                    </p>
-                                                </div>
-                                            </td>
                                             <td className="py-4 px-6">
                                                 <div className="flex items-center justify-center gap-2">
+                                                    <button
+                                                        onClick={() => setViewTarget(item)}
+                                                        className="px-3 py-1.5 bg-[#50ad77]/10 text-[#50ad77] hover:bg-[#50ad77] hover:text-white rounded-lg font-bold text-xs transition-colors"
+                                                    >
+                                                        View
+                                                    </button>
                                                     <button
                                                         onClick={() => handleEdit(item)}
                                                         className="px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-500 hover:text-white rounded-lg font-bold text-xs transition-colors"

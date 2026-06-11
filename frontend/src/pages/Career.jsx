@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import FloatingButtons from '../components/FloatingButtons';
 import Footer from '../components/Footer';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import ReactPhoneInput from 'react-phone-input-2';
 const PhoneInput = ReactPhoneInput.default ? ReactPhoneInput.default : ReactPhoneInput;
 import 'react-phone-input-2/lib/style.css';
@@ -241,8 +242,17 @@ export default function Career() {
     }
   };
 
+  const firstOpportunity = opportunities[0];
+
   return (
     <>
+      {firstOpportunity && (
+        <Helmet>
+          {firstOpportunity.meta_title ? <title>{firstOpportunity.meta_title}</title> : null}
+          {firstOpportunity.meta_description ? <meta name="description" content={firstOpportunity.meta_description} /> : null}
+          {firstOpportunity.meta_keywords ? <meta name="keywords" content={firstOpportunity.meta_keywords} /> : null}
+        </Helmet>
+      )}
       <Topbar />
       <Header />
       <div className="relative h-48 sm:h-56 md:h-64 lg:h-72 w-full bg-slate-900 overflow-hidden animate-fade-in">
